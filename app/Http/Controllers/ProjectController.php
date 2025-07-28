@@ -4,13 +4,17 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CreateProjectRequest;
 use App\Http\Requests\UpdateProjectRequest;
+use App\Http\Resources\PipelineResource;
 use App\Http\Resources\ProjectResource;
 use App\Models\Project;
+use App\Services\PipelineService;
 use App\Services\ProjectService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Str;
+use Illuminate\Validation\Rule;
 
 /**
  * Project API Controller
@@ -21,10 +25,12 @@ use Illuminate\Support\Facades\Gate;
 class ProjectController extends Controller
 {
      protected ProjectService $projectService;
+     protected PipelineService $pipelineService;
 
-    public function __construct(ProjectService $projectService)
+    public function __construct(ProjectService $projectService, PipelineService $pipelineService)
     {
         $this->projectService = $projectService;
+        $this->pipelineService = $pipelineService;
     }
 
     /**
@@ -310,4 +316,95 @@ class ProjectController extends Controller
             'data' => $statistics
         ]);
     }
+
+    /**
+     * Get the default pipeline for this project or create one if not exists.
+     * 
+     * @param Project $project
+     * @return JsonResponse
+     */
+    public function getDefaultPipeline(Project $project): JsonResponse
+    {
+        Gate::authorize('view', $project);
+        
+        // First try to get project-specific default pipeline
+        $pipeline = $this->pipelineService->getDefaultForProject($project->id);
+        
+        // If not found, get workspace default pipeline
+        if (!$pipeline) {
+            $pipeline = $this->pipelineService->getOrCreateDefaultPipelineForWorkspace($project->workspace_id);
+        }
+        
+        return response()->json([
+            'data' => new PipelineResource($pipeline)
+        ]);
+    }
+
+        /**
+         * Create a new pipeline for this project.
+         * 
+         * @param Request $request
+         * @param Project $project
+         * @return JsonResponse
+         */
+        public function createPipeline(Request $request, Project $project): JsonResponse
+        {
+            Gate::authorize('update', $project);
+            
+            $request->validate([
+                'name' => 'required|string|max:255',
+                'slug' => 'nullable|string|max:255|regex:/^[a-z0-9-]+$/',
+                'description' => 'nullable|string',
+                'is_default' => 'nullable|boolean',
+                'statuses' => 'nullable|array',
+                'statuses.*' => 'integer|exists:statuses,id'
+            ]);
+            
+            $pipelineData = [
+                'workspace_id' => $project->workspace_id,
+                'project_id' => $project->id,
+                'name' => $request->name,
+                'slug' => $request->slug ?? Str::slug($request->name),
+                'description' => $request->description,
+                'is_default' => $request->is_default ?? false,
+            ];
+            
+            $statusIds = $request->statuses ?? [];
+            $pipeline = $this->pipelineService->createPipeline($pipelineData, $statusIds);
+            
+            return response()->json([
+                'message' => 'Project pipeline created successfully.',
+                'data' => new PipelineResource($pipeline)
+            ], 201);
+        }
+
+        /**
+         * Update project status.
+         * 
+         * @param Request $request
+         * @param Project $project
+         * @return JsonResponse
+         */
+        public function updateStatus(Request $request, Project $project): JsonResponse
+        {
+            Gate::authorize('update', $project);
+            
+            $request->validate([
+                'status' => [
+                    'required',
+                    Rule::in(array_keys(Project::STATUSES))
+                ]
+            ]);
+            
+            $updatedProject = $this->projectService->updateProject($project, [
+                'status' => $request->status
+            ]);
+            
+            return response()->json([
+                'message' => 'Project status updated successfully.',
+                'data' => new ProjectResource($updatedProject)
+            ]);
+        }
+ 
+
 }

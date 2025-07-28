@@ -1,6 +1,8 @@
 <?php
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\PipelineController;
 use App\Http\Controllers\Api\ProjectController;
+use App\Http\Controllers\Api\StatusController;
 use App\Http\Controllers\Api\TeamController;
 use App\Http\Controllers\Api\WorkspaceController;
 use Illuminate\Support\Facades\Route;
@@ -60,8 +62,49 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/assign-user', [ProjectController::class, 'assignUser'])->name('projects.assign-user');
         Route::delete('/remove-user', [ProjectController::class, 'removeUser'])->name('projects.remove-user');
         Route::patch('/update-user-role', [ProjectController::class, 'updateUserRole'])->name('projects.update-user-role');
-    });
+        });
 
-    // Project statistics
-    Route::get('projects-statistics', [ProjectController::class, 'statistics'])->name('projects.statistics');
+        // Project statistics
+        Route::get('projects-statistics', [ProjectController::class, 'statistics'])->name('projects.statistics');
+
+        // RESTful Status routes
+        Route::apiResource('statuses', StatusController::class);
+        
+        // Custom Status routes
+        Route::get('workspaces/{workspaceId}/statuses', [StatusController::class, 'byWorkspace']);
+        Route::get('statuses/type/{type}', [StatusController::class, 'byType']);
+        Route::post('statuses/create-default', [StatusController::class, 'createDefaultStatuses']);
+
+        /*
+        |--------------------------------------------------------------------------
+        | Pipeline API Routes
+        |--------------------------------------------------------------------------
+        */
+
+        // RESTful Pipeline routes
+        Route::apiResource('pipelines', PipelineController::class);
+        
+        // Custom Pipeline routes
+        Route::get('workspaces/{workspaceId}/pipelines', [PipelineController::class, 'byWorkspace']);
+        Route::get('projects/{projectId}/pipelines', [PipelineController::class, 'byProject']);
+        
+        // Pipeline management routes
+        Route::prefix('pipelines/{pipeline}')->group(function () {
+            Route::patch('/set-default', [PipelineController::class, 'setAsDefault']);
+            Route::post('/sync-statuses', [PipelineController::class, 'syncStatuses']);
+            Route::post('/add-status', [PipelineController::class, 'addStatus']);
+            Route::delete('/remove-status', [PipelineController::class, 'removeStatus']);
+            Route::patch('/reorder-statuses', [PipelineController::class, 'reorderStatuses']);
+        });
+        
+        Route::post('pipelines/create-default', [PipelineController::class, 'createDefaultPipelineForWorkspace']);
+        
+
+        // Project status and pipeline management
+        Route::prefix('projects/{project}')->group(function () {
+            Route::get('/default-pipeline', [ProjectController::class, 'getDefaultPipeline']);
+            Route::post('/pipelines', [ProjectController::class, 'createPipeline']);
+            Route::patch('/status', [ProjectController::class, 'updateStatus']);
+        });
+
 });
