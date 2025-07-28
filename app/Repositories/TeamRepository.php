@@ -2,21 +2,22 @@
 
 namespace App\Repositories;
 
-use App\Models\Workspace;
-use App\Repositories\Contracts\WorkspaceRepositoryInterface;
+use App\Models\Team;
+use App\Repositories\Contracts\TeamRepositoryInterface;
 use Illuminate\Pagination\LengthAwarePaginator;
 
-class WorkspaceRepository implements WorkspaceRepositoryInterface
+class TeamRepository implements TeamRepositoryInterface
 {
     /**
-     * Get all workspaces with pagination and filtering.
+     * Get teams by workspace with pagination and filtering.
      *
+     * @param int $workspaceId
      * @param array $filters
      * @return \Illuminate\Pagination\LengthAwarePaginator
      */
-    public function getAllWorkspaces(array $filters = []): LengthAwarePaginator
+    public function getTeamsByWorkspace(int $workspaceId, array $filters = []): LengthAwarePaginator
     {
-        $query = Workspace::query();
+        $query = Team::where('workspace_id', $workspaceId);
         
         // Apply filters
         if (isset($filters['is_active'])) {
@@ -36,10 +37,6 @@ class WorkspaceRepository implements WorkspaceRepositoryInterface
         $query->orderBy($sortField, $sortDirection);
 
         // Load relationships if requested
-        if (isset($filters['with_teams']) && $filters['with_teams']) {
-            $query->with('teams');
-        }
-        
         if (isset($filters['with_users']) && $filters['with_users']) {
             $query->with('users');
         }
@@ -51,48 +48,48 @@ class WorkspaceRepository implements WorkspaceRepositoryInterface
     }
 
     /**
-     * Get workspace by ID with relationships.
+     * Get team by ID with relationships.
      *
      * @param int $id
-     * @return Workspace
+     * @return Team
      */
-    public function getWorkspaceById(int $id): Workspace
+    public function getTeamById(int $id): Team
     {
-        return Workspace::with(['teams', 'users'])->findOrFail($id);
+        return Team::with(['workspace', 'users'])->findOrFail($id);
     }
 
     /**
-     * Create a new workspace.
+     * Create a new team.
      *
      * @param array $data
-     * @return Workspace
+     * @return Team
      */
-    public function createWorkspace(array $data): Workspace
+    public function createTeam(array $data): Team
     {
-        return Workspace::create($data);
+        return Team::create($data);
     }
 
     /**
-     * Update an existing workspace.
+     * Update an existing team.
      *
-     * @param Workspace $workspace
+     * @param Team $team
      * @param array $data
-     * @return Workspace
+     * @return Team
      */
-    public function updateWorkspace(Workspace $workspace, array $data): Workspace
+    public function updateTeam(Team $team, array $data): Team
     {
-        $workspace->update($data);
-        return $workspace->fresh();
+        $team->update($data);
+        return $team->fresh();
     }
 
     /**
-     * Delete a workspace.
+     * Delete a team.
      *
-     * @param Workspace $workspace
+     * @param Team $team
      * @return bool
      */
-    public function deleteWorkspace(Workspace $workspace): bool
+    public function deleteTeam(Team $team): bool
     {
-        return $workspace->delete();
+        return $team->delete();
     }
 }

@@ -4,10 +4,10 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
-class Workspace extends Model
+class Team extends Model
 {
     use HasFactory;
 
@@ -17,12 +17,11 @@ class Workspace extends Model
      * @var array<int, string>
      */
     protected $fillable = [
+        'workspace_id',
         'name',
         'slug',
         'description',
-        'logo',
-        'domain',
-        'settings',
+        'color',
         'is_active',
     ];
 
@@ -32,30 +31,29 @@ class Workspace extends Model
      * @var array<string, string>
      */
     protected $casts = [
-        'settings' => 'array',
         'is_active' => 'boolean',
     ];
 
     /**
-     * Get the teams for the workspace.
+     * Get the workspace that owns the team.
      */
-    public function teams(): HasMany
+    public function workspace(): BelongsTo
     {
-        return $this->hasMany(Team::class);
+        return $this->belongsTo(Workspace::class);
     }
 
     /**
-     * Get the users that belong to the workspace.
+     * Get the users that belong to the team.
      */
     public function users(): BelongsToMany
     {
-        return $this->belongsToMany(User::class, 'workspace_user')
+        return $this->belongsToMany(User::class, 'team_user')
             ->withPivot('role', 'joined_at')
             ->withTimestamps();
     }
 
     /**
-     * Scope a query to only include active workspaces.
+     * Scope a query to only include active teams.
      */
     public function scopeActive($query)
     {

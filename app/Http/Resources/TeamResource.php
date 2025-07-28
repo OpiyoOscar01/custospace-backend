@@ -5,7 +5,7 @@ namespace App\Http\Resources;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class WorkspaceResource extends JsonResource
+class TeamResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -16,24 +16,23 @@ class WorkspaceResource extends JsonResource
     {
         return [
             'id' => $this->id,
+            'workspace_id' => $this->workspace_id,
             'name' => $this->name,
             'slug' => $this->slug,
             'description' => $this->description,
-            'logo' => $this->logo,
-            'domain' => $this->domain,
-            'settings' => $this->settings,
+            'color' => $this->color,
             'is_active' => $this->is_active,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
             
             // Include relationships if they are loaded
-            'teams' => TeamResource::collection($this->whenLoaded('teams')),
+            'workspace' => new WorkspaceResource($this->whenLoaded('workspace')),
             'users' => UserResource::collection($this->whenLoaded('users')),
             
             // Add relevant links for HATEOAS
             'links' => [
-                'self' => route('api.workspaces.show', $this->id),
-                'teams' => route('api.workspaces.teams.index', $this->id),
+                'self' => route('api.teams.show', $this->id),
+                'workspace' => route('api.workspaces.show', $this->workspace_id),
             ],
         ];
     }
