@@ -2,9 +2,11 @@
 
 namespace App\Providers;
 
+use App\Models\Project;
 use App\Models\Team;
 use App\Models\User;
 use App\Models\Workspace;
+use App\Policies\ProjectPolicy;
 use App\Policies\TeamPolicy;
 use App\Policies\WorkspacePolicy;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
@@ -20,6 +22,8 @@ class AuthServiceProvider extends ServiceProvider
     protected $policies = [
         Workspace::class => WorkspacePolicy::class,
         Team::class => TeamPolicy::class,
+        Project::class => ProjectPolicy::class,
+
     ];
 
     /**

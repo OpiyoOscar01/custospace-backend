@@ -221,6 +221,8 @@ Policy file: app/Policies/EntityNamePolicy.php
 
 Register the policy in AuthServiceProvider.
 
+Also create the migration files.
+
 API Routes
 
 Define routes in routes/api.php.
@@ -338,6 +340,86 @@ Maintain separation of concerns between the different components.
 
 Ensure single responsibility per class.
 
-Add PHPDoc comments and annotations for method/documentation clarity.
+Add PHPDoc comments and annotations for method/documentation clarity and also add necessary comments in parts of the code for understanding.
 
 Ensure API Resource formatting aligns with frontend expectations.
+Let's follow best and modern laravel practices.
+These are my migration files:
+
+ // Project Management Tables
+        Schema::create('projects', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('workspace_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('team_id')->nullable()->constrained()->nullOnDelete();
+            $table->foreignId('owner_id')->constrained('users')->cascadeOnDelete();
+            $table->string('name');
+            $table->string('slug');
+            $table->text('description')->nullable();
+            $table->string('color')->default('#10B981');
+            $table->enum('status', ['draft', 'active', 'on_hold', 'completed', 'cancelled'])->default('draft');
+            $table->enum('priority', ['low', 'medium', 'high', 'urgent'])->default('medium');
+            $table->date('start_date')->nullable();
+            $table->date('end_date')->nullable();
+            $table->decimal('budget', 15, 2)->nullable();
+            $table->integer('progress')->default(0);
+            $table->boolean('is_template')->default(false);
+            $table->json('metadata')->nullable();
+            $table->timestamps();
+            
+            $table->unique(['workspace_id', 'slug']);
+            $table->index(['workspace_id', 'status']);
+            $table->index(['team_id', 'status']);
+            $table->index(['owner_id', 'status']);
+        });
+
+        Schema::create('project_user', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('project_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
+            $table->enum('role', ['owner', 'manager', 'contributor', 'viewer'])->default('contributor');
+            $table->timestamps();
+            
+            $table->unique(['project_id', 'user_id']);
+            $table->index(['user_id', 'role']);
+        });
+
+        Schema::create('statuses', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('workspace_id')->constrained()->cascadeOnDelete();
+            $table->string('name');
+            $table->string('slug');
+            $table->string('color')->default('#6B7280');
+            $table->string('icon')->nullable();
+            $table->integer('order')->default(0);
+            $table->enum('type', ['backlog', 'todo', 'in_progress', 'done', 'cancelled'])->default('todo');
+            $table->boolean('is_default')->default(false);
+            $table->timestamps();
+            
+            $table->unique(['workspace_id', 'slug']);
+            $table->index(['workspace_id', 'type']);
+        });
+
+        Schema::create('pipelines', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('workspace_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('project_id')->nullable()->constrained()->nullOnDelete();
+            $table->string('name');
+            $table->string('slug');
+            $table->text('description')->nullable();
+            $table->boolean('is_default')->default(false);
+            $table->timestamps();
+            
+            $table->unique(['workspace_id', 'slug']);
+            $table->index(['workspace_id', 'project_id']);
+        });
+
+        Schema::create('pipeline_status', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('pipeline_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('status_id')->constrained()->cascadeOnDelete();
+            $table->integer('order')->default(0);
+            $table->timestamps();
+            
+            $table->unique(['pipeline_id', 'status_id']);
+            $table->index(['pipeline_id', 'order']);
+        });

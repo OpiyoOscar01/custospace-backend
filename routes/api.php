@@ -1,5 +1,6 @@
 <?php
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\ProjectController;
 use App\Http\Controllers\Api\TeamController;
 use App\Http\Controllers\Api\WorkspaceController;
 use Illuminate\Support\Facades\Route;
@@ -41,4 +42,26 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::patch('/{team}/deactivate', [TeamController::class, 'deactivate'])->name('deactivate');
         Route::post('/{team}/users', [TeamController::class, 'assignUser'])->name('assign-user');
     });
+    // RESTful Project routes
+    Route::apiResource('projects', ProjectController::class);
+
+    // Custom Project actions
+    Route::prefix('projects/{project}')->group(function () {
+        // Status management
+        Route::patch('/activate', [ProjectController::class, 'activate'])->name('projects.activate');
+        Route::patch('/deactivate', [ProjectController::class, 'deactivate'])->name('projects.deactivate');
+        Route::patch('/complete', [ProjectController::class, 'complete'])->name('projects.complete');
+        Route::patch('/cancel', [ProjectController::class, 'cancel'])->name('projects.cancel');
+        
+        // Progress management
+        Route::patch('/progress', [ProjectController::class, 'updateProgress'])->name('projects.progress');
+        
+        // User management
+        Route::post('/assign-user', [ProjectController::class, 'assignUser'])->name('projects.assign-user');
+        Route::delete('/remove-user', [ProjectController::class, 'removeUser'])->name('projects.remove-user');
+        Route::patch('/update-user-role', [ProjectController::class, 'updateUserRole'])->name('projects.update-user-role');
+    });
+
+    // Project statistics
+    Route::get('projects-statistics', [ProjectController::class, 'statistics'])->name('projects.statistics');
 });

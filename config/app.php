@@ -171,6 +171,7 @@ return [
 
     // ✅ Custom Repository Binding Provider
     App\Providers\RepositoryServiceProvider::class,
+    App\Providers\AuthServiceProvider::class,
 
 ],
 
