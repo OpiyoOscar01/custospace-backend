@@ -10,9 +10,12 @@ use App\Models\Workspace;
 use App\Services\WorkspaceService;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 
 class WorkspaceController extends Controller
 {
+    use AuthorizesRequests;
+
     protected $workspaceService;
 
     /**

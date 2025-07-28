@@ -10,10 +10,14 @@ use App\Models\Team;
 use App\Models\Workspace;
 use App\Services\TeamService;
 use Illuminate\Http\Request;
+
 use Illuminate\Http\Response;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 
 class TeamController extends Controller
 {
+    use AuthorizesRequests;
+
     protected $teamService;
 
     /**
