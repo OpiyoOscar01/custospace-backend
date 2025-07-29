@@ -5,6 +5,7 @@ use App\Http\Controllers\Api\PipelineController;
 use App\Http\Controllers\Api\ProjectController;
 use App\Http\Controllers\Api\StatusController;
 use App\Http\Controllers\Api\SubtaskController;
+use App\Http\Controllers\Api\TagController;
 use App\Http\Controllers\Api\TaskController;
 use App\Http\Controllers\Api\TeamController;
 use App\Http\Controllers\Api\WorkspaceController;
@@ -132,5 +133,12 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::patch('milestones/{milestone}/toggle-completion', [MilestoneController::class, 'toggleCompletion']);
         Route::put('milestones/{milestone}/tasks', [MilestoneController::class, 'syncTasks']);
         Route::post('projects/{project}/milestones/reorder', [MilestoneController::class, 'reorder']);
+
+        // Tag Routes
+        Route::apiResource('tags', TagController::class);
+    
+        Route::post('tags/{tag}/assign-to-task', [TagController::class, 'assignToTask']);
+        Route::post('tags/{tag}/remove-from-task', [TagController::class, 'removeFromTask']);
+        Route::get('tasks/tags', [TagController::class, 'getByTask']);
 
 });

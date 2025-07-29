@@ -19,6 +19,8 @@ use App\Repositories\MilestoneRepository;
 use App\Repositories\SubtaskRepository;
 use App\Repositories\Contracts\SubtaskRepositoryInterface;
 use App\Repositories\Contracts\MilestoneRepositoryInterface;
+use App\Repositories\Contracts\TagRepositoryInterface;
+use App\Repositories\TagRepository;
 class RepositoryServiceProvider extends ServiceProvider
 {
     /**
@@ -35,6 +37,8 @@ class RepositoryServiceProvider extends ServiceProvider
         $this->app->bind(TaskRepositoryInterface::class, TaskRepository::class);
         $this->app->bind(SubtaskRepositoryInterface::class, SubtaskRepository::class);
         $this->app->bind(MilestoneRepositoryInterface::class, MilestoneRepository::class);
+        $this->app->bind(TagRepositoryInterface::class, TagRepository::class);
+
 
     }
 
