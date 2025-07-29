@@ -86,7 +86,6 @@ return new class extends Migration
             $table->unique(['workspace_id', 'user_id']);
             $table->index(['user_id', 'role']);
         });
-        ---------------------------------------------------------------------------------------------------------
 
         // Project Management Tables
         Schema::create('projects', function (Blueprint $table) {
@@ -165,6 +164,8 @@ return new class extends Migration
             $table->unique(['pipeline_id', 'status_id']);
             $table->index(['pipeline_id', 'order']);
         });
+                ---------------------------------------------------------------------------------------------------------
+
 
         // Task Management Tables
         Schema::create('tasks', function (Blueprint $table) {
