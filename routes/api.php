@@ -3,6 +3,7 @@ use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\PipelineController;
 use App\Http\Controllers\Api\ProjectController;
 use App\Http\Controllers\Api\StatusController;
+use App\Http\Controllers\Api\TaskController;
 use App\Http\Controllers\Api\TeamController;
 use App\Http\Controllers\Api\WorkspaceController;
 use Illuminate\Support\Facades\Route;
@@ -106,5 +107,14 @@ Route::middleware('auth:sanctum')->group(function () {
             Route::post('/pipelines', [ProjectController::class, 'createPipeline']);
             Route::patch('/status', [ProjectController::class, 'updateStatus']);
         });
+         // Task Routes
+        Route::apiResource('tasks', TaskController::class);
+        
+        // Task custom actions
+        Route::patch('tasks/{task}/status', [TaskController::class, 'changeStatus']);
+        Route::patch('tasks/{task}/assign', [TaskController::class, 'assignTask']);
+        Route::post('tasks/{task}/dependencies', [TaskController::class, 'addDependency']);
+        Route::delete('tasks/{task}/dependencies', [TaskController::class, 'removeDependency']);
+        Route::put('tasks/{task}/milestones', [TaskController::class, 'syncMilestones']);
 
 });

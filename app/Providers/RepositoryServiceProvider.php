@@ -13,6 +13,8 @@ use App\Repositories\StatusRepository;
 use App\Repositories\TeamRepository;
 use App\Repositories\WorkspaceRepository;
 use Illuminate\Support\ServiceProvider;
+use App\Repositories\Contracts\TaskRepositoryInterface;
+use App\Repositories\TaskRepository;
 
 class RepositoryServiceProvider extends ServiceProvider
 {
@@ -30,6 +32,8 @@ class RepositoryServiceProvider extends ServiceProvider
 
         // Bind Pipeline Repository
         $this->app->bind(PipelineRepositoryInterface::class, PipelineRepository::class);
+        $this->app->bind(TaskRepositoryInterface::class, TaskRepository::class);
+
     }
 
     /**
