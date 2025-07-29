@@ -14,6 +14,30 @@ class MilestoneResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        return parent::toArray($request);
+        return [
+            'id' => $this->id,
+            'project_id' => $this->project_id,
+            'name' => $this->name,
+            'description' => $this->description,
+            'due_date' => $this->due_date,
+            'is_completed' => $this->is_completed,
+            'order' => $this->order,
+            'created_at' => $this->created_at,
+            'updated_at' => $this->updated_at,
+            
+            // Include relationships when they are loaded
+            'project' => new ProjectResource($this->whenLoaded('project')),
+            'tasks' => TaskResource::collection($this->whenLoaded('tasks')),
+            
+            // Include additional meta data
+            'task_count' => $this->whenLoaded('tasks', function () {
+                return $this->tasks->count();
+            }),
+            'completed_task_count' => $this->whenLoaded('tasks', function () {
+                return $this->tasks->filter(function ($task) {
+                    return $task->isCompleted();
+                })->count();
+            }),
+        ];
     }
 }

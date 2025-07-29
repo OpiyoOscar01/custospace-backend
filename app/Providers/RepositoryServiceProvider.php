@@ -15,7 +15,10 @@ use App\Repositories\WorkspaceRepository;
 use Illuminate\Support\ServiceProvider;
 use App\Repositories\Contracts\TaskRepositoryInterface;
 use App\Repositories\TaskRepository;
-
+use App\Repositories\MilestoneRepository;
+use App\Repositories\SubtaskRepository;
+use App\Repositories\Contracts\SubtaskRepositoryInterface;
+use App\Repositories\Contracts\MilestoneRepositoryInterface;
 class RepositoryServiceProvider extends ServiceProvider
 {
     /**
@@ -26,13 +29,12 @@ class RepositoryServiceProvider extends ServiceProvider
         $this->app->bind(WorkspaceRepositoryInterface::class, WorkspaceRepository::class);
         $this->app->bind(TeamRepositoryInterface::class, TeamRepository::class);
         $this->app->bind(ProjectRepositoryInterface::class, ProjectRepository::class);
-
-        // Bind Status Repository
         $this->app->bind(StatusRepositoryInterface::class, StatusRepository::class);
-
-        // Bind Pipeline Repository
         $this->app->bind(PipelineRepositoryInterface::class, PipelineRepository::class);
         $this->app->bind(TaskRepositoryInterface::class, TaskRepository::class);
+        $this->app->bind(TaskRepositoryInterface::class, TaskRepository::class);
+        $this->app->bind(SubtaskRepositoryInterface::class, SubtaskRepository::class);
+        $this->app->bind(MilestoneRepositoryInterface::class, MilestoneRepository::class);
 
     }
 

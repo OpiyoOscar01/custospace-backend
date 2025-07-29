@@ -156,6 +156,8 @@ class Task extends Model
     /**
      * Scope a query to filter tasks by status.
      */
+
+    
     public function scopeOfStatus($query, $statusId)
     {
         return $query->where('status_id', $statusId);

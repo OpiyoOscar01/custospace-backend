@@ -1,8 +1,10 @@
 <?php
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\MilestoneController;
 use App\Http\Controllers\Api\PipelineController;
 use App\Http\Controllers\Api\ProjectController;
 use App\Http\Controllers\Api\StatusController;
+use App\Http\Controllers\Api\SubtaskController;
 use App\Http\Controllers\Api\TaskController;
 use App\Http\Controllers\Api\TeamController;
 use App\Http\Controllers\Api\WorkspaceController;
@@ -107,6 +109,7 @@ Route::middleware('auth:sanctum')->group(function () {
             Route::post('/pipelines', [ProjectController::class, 'createPipeline']);
             Route::patch('/status', [ProjectController::class, 'updateStatus']);
         });
+         
          // Task Routes
         Route::apiResource('tasks', TaskController::class);
         
@@ -116,5 +119,18 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('tasks/{task}/dependencies', [TaskController::class, 'addDependency']);
         Route::delete('tasks/{task}/dependencies', [TaskController::class, 'removeDependency']);
         Route::put('tasks/{task}/milestones', [TaskController::class, 'syncMilestones']);
+        
+        // Subtask Routes
+        Route::get('tasks/{task}/subtasks', [SubtaskController::class, 'index']);
+        Route::apiResource('subtasks', SubtaskController::class)->except(['index']);
+        Route::patch('subtasks/{subtask}/toggle-completion', [SubtaskController::class, 'toggleCompletion']);
+        Route::post('tasks/{task}/subtasks/reorder', [SubtaskController::class, 'reorder']);
+        
+        // Milestone Routes
+        Route::apiResource('milestones', MilestoneController::class);
+        Route::get('projects/{project}/milestones', [MilestoneController::class, 'byProject']);
+        Route::patch('milestones/{milestone}/toggle-completion', [MilestoneController::class, 'toggleCompletion']);
+        Route::put('milestones/{milestone}/tasks', [MilestoneController::class, 'syncTasks']);
+        Route::post('projects/{project}/milestones/reorder', [MilestoneController::class, 'reorder']);
 
 });
