@@ -21,6 +21,14 @@ use App\Repositories\Contracts\SubtaskRepositoryInterface;
 use App\Repositories\Contracts\MilestoneRepositoryInterface;
 use App\Repositories\Contracts\TagRepositoryInterface;
 use App\Repositories\TagRepository;
+use App\Repositories\CommentRepository;
+use App\Repositories\Contracts\CommentRepositoryInterface;
+use App\Repositories\ConversationRepository;
+use App\Repositories\Contracts\ConversationRepositoryInterface;
+use App\Repositories\MessageRepository;
+use App\Repositories\Contracts\MessageRepositoryInterface;
+use App\Repositories\MentionRepository;
+use App\Repositories\Contracts\MentionRepositoryInterface;
 class RepositoryServiceProvider extends ServiceProvider
 {
     /**
@@ -38,6 +46,10 @@ class RepositoryServiceProvider extends ServiceProvider
         $this->app->bind(SubtaskRepositoryInterface::class, SubtaskRepository::class);
         $this->app->bind(MilestoneRepositoryInterface::class, MilestoneRepository::class);
         $this->app->bind(TagRepositoryInterface::class, TagRepository::class);
+        $this->app->bind(CommentRepositoryInterface::class, CommentRepository::class);
+        $this->app->bind(ConversationRepositoryInterface::class, ConversationRepository::class);
+        $this->app->bind(MessageRepositoryInterface::class, MessageRepository::class);
+        $this->app->bind(MentionRepositoryInterface::class, MentionRepository::class);
 
 
     }

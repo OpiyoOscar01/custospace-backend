@@ -1,5 +1,9 @@
 <?php
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\CommentController;
+use App\Http\Controllers\Api\ConversationController;
+use App\Http\Controllers\Api\MentionController;
+use App\Http\Controllers\Api\MessageController;
 use App\Http\Controllers\Api\MilestoneController;
 use App\Http\Controllers\Api\PipelineController;
 use App\Http\Controllers\Api\ProjectController;
@@ -140,5 +144,33 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('tags/{tag}/assign-to-task', [TagController::class, 'assignToTask']);
         Route::post('tags/{tag}/remove-from-task', [TagController::class, 'removeFromTask']);
         Route::get('tasks/tags', [TagController::class, 'getByTask']);
+
+        //Comment Routes
+        Route::apiResource('comments', CommentController::class);
+        Route::get('comments/by-commentable', [CommentController::class, 'getByCommentable']);
+        Route::patch('comments/{comment}/toggle-internal', [CommentController::class, 'toggleInternal']);
+
+        // Conversation Routes
+        Route::apiResource('conversations', ConversationController::class);
+    
+        // Additional conversation routes
+        Route::post('conversations/{conversation}/users', [ConversationController::class, 'addUsers']);
+        Route::delete('conversations/{conversation}/users', [ConversationController::class, 'removeUsers']);
+        Route::patch('conversations/{conversation}/users/role', [ConversationController::class, 'updateUserRole']);
+        Route::post('conversations/{conversation}/read', [ConversationController::class, 'markAsRead']);
+        Route::post('conversations/direct', [ConversationController::class, 'createDirectConversation']);
+
+        // Message Routes
+        Route::apiResource('messages', MessageController::class);
+        Route::get('conversations/{conversation}/messages', [MessageController::class, 'index']);
+        Route::get('conversations/{conversation}/messages/after', [MessageController::class, 'getMessagesAfter']);
+
+        //Mention Routes
+        Route::get('mentions', [MentionController::class, 'index']);
+        Route::get('mentions/unread-count', [MentionController::class, 'getUnreadCount']);
+        Route::post('mentions/mark-all-read', [MentionController::class, 'markAllAsRead']);
+        Route::get('mentions/{mention}', [MentionController::class, 'show']);
+        Route::patch('mentions/{mention}/read', [MentionController::class, 'markAsRead']);
+        Route::delete('mentions/{mention}', [MentionController::class, 'destroy']);
 
 });
