@@ -24,6 +24,8 @@ use App\Http\Controllers\Api\TimeLogController;
 use App\Http\Controllers\Api\NotificationController;
 use App\Http\Controllers\Api\ReactionController;
 use App\Http\Controllers\Api\ReminderController;
+use App\Http\Controllers\Api\CustomFieldController;
+use App\Http\Controllers\Api\CustomFieldValueController;
 use Illuminate\Support\Facades\Route;
 
 // Public auth routes
@@ -345,6 +347,31 @@ Route::middleware('auth:sanctum')->group(function () {
                 Route::get('/user', 'getUserReactions')->name('reactions.user');
                 Route::post('/bulk-toggle', 'bulkToggle')->name('reactions.bulk-toggle');
                 Route::get('/types', 'getAvailableTypes')->name('reactions.types');
+            });
+
+            // Custom Fields Routes
+            Route::prefix('custom-fields')->controller(CustomFieldController::class)->group(function () {
+                Route::get('/', 'index');
+                Route::post('/', 'store');
+                Route::get('by-entity', 'getByEntity');
+                Route::patch('update-order', 'updateOrder');
+                
+                Route::get('{customField}', 'show');
+                Route::put('{customField}', 'update');
+                Route::delete('{customField}', 'destroy');
+                Route::post('{customField}/duplicate', 'duplicate');
+            });
+
+            // Custom Field Values Routes  
+            Route::prefix('custom-field-values')->controller(CustomFieldValueController::class)->group(function () {
+                Route::get('/', 'index');
+                Route::post('/', 'store');
+                Route::post('bulk-store', 'bulkStore');
+                Route::get('by-entity', 'getByEntity');
+                
+                Route::get('{customFieldValue}', 'show');
+                Route::put('{customFieldValue}', 'update');
+                Route::delete('{customFieldValue}', 'destroy');
             });
 
 

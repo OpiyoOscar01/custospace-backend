@@ -48,6 +48,10 @@ use App\Repositories\AuditLogRepository;
 use App\Repositories\Contracts\ActivityLogRepositoryInterface;
 use App\Repositories\Contracts\AuditLogRepositoryInterface;
 use App\Repositories\Contracts\ReactionRepositoryInterface;
+use App\Repositories\Contracts\CustomFieldRepositoryInterface;
+use App\Repositories\Contracts\CustomFieldValueRepositoryInterface;
+use App\Repositories\CustomFieldRepository;
+use App\Repositories\CustomFieldValueRepository;
 use App\Repositories\ReactionRepository;
 class RepositoryServiceProvider extends ServiceProvider
 {
@@ -80,6 +84,8 @@ class RepositoryServiceProvider extends ServiceProvider
         $this->app->bind(ActivityLogRepositoryInterface::class,ActivityLogRepository::class);
         $this->app->bind(AuditLogRepositoryInterface::class,AuditLogRepository::class);
         $this->app->bind(ReactionRepositoryInterface::class,ReactionRepository::class);
+        $this->app->bind(CustomFieldRepositoryInterface::class,CustomFieldRepository::class);
+        $this->app->bind(CustomFieldValueRepositoryInterface::class,CustomFieldValueRepository::class);
     }
 
 

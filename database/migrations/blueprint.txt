@@ -593,6 +593,8 @@ return new class extends Migration
             $table->unique(['custom_field_id', 'entity_type', 'entity_id']);
             $table->index(['entity_type', 'entity_id']);
         });
+     --------------------------------------------------------------------------------------------------------
+
 
         // Forms System
         Schema::create('forms', function (Blueprint $table) {
