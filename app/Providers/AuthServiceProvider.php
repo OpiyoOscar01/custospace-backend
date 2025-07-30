@@ -25,6 +25,7 @@ use App\Policies\RecurringTaskPolicy;
 use App\Policies\TimeLogPolicy;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 use Illuminate\Support\Facades\Gate;
+use PharIo\Manifest\License;
 
 class AuthServiceProvider extends ServiceProvider
 {
@@ -59,3 +60,4 @@ class AuthServiceProvider extends ServiceProvider
         // Define gates if needed
     }
 }
+
