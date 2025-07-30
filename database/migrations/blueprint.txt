@@ -282,7 +282,6 @@ return new class extends Migration
             $table->unique(['task_id', 'tag_id']);
         });
 
-        ---------------------------------------------------------------------------------------------------------
 
         // Communication Tables
         Schema::create('comments', function (Blueprint $table) {
@@ -387,6 +386,8 @@ return new class extends Migration
             $table->index(['workspace_id', 'collection']);
             $table->index(['user_id', 'created_at']);
         });
+
+ --------------------------------------------------------------------------------------------------------
 
         // Checklist System
         Schema::create('checklists', function (Blueprint $table) {

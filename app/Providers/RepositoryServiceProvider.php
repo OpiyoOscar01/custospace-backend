@@ -22,6 +22,7 @@ use App\Repositories\Contracts\MilestoneRepositoryInterface;
 use App\Repositories\Contracts\TagRepositoryInterface;
 use App\Repositories\TagRepository;
 use App\Repositories\CommentRepository;
+use App\Repositories\Contracts\AttachmentRepositoryInterface;
 use App\Repositories\Contracts\CommentRepositoryInterface;
 use App\Repositories\ConversationRepository;
 use App\Repositories\Contracts\ConversationRepositoryInterface;
@@ -29,6 +30,9 @@ use App\Repositories\MessageRepository;
 use App\Repositories\Contracts\MessageRepositoryInterface;
 use App\Repositories\MentionRepository;
 use App\Repositories\Contracts\MentionRepositoryInterface;
+use App\Repositories\AttachmentRepository;
+use App\Repositories\Contracts\MediaRepositoryInterface;
+use App\Repositories\MediaRepository;
 class RepositoryServiceProvider extends ServiceProvider
 {
     /**
@@ -50,9 +54,12 @@ class RepositoryServiceProvider extends ServiceProvider
         $this->app->bind(ConversationRepositoryInterface::class, ConversationRepository::class);
         $this->app->bind(MessageRepositoryInterface::class, MessageRepository::class);
         $this->app->bind(MentionRepositoryInterface::class, MentionRepository::class);
-
-
+        $this->app->bind(AttachmentRepositoryInterface::class, AttachmentRepository::class);
+        $this->app->bind(MediaRepositoryInterface::class, MediaRepository::class);
     }
+
+
+    
 
     /**
      * Bootstrap services.

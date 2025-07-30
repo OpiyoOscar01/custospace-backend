@@ -2,12 +2,16 @@
 
 namespace App\Providers;
 
+use App\Models\Attachment;
+use App\Models\Media;
 use App\Models\Pipeline;
 use App\Models\Project;
 use App\Models\Status;
 use App\Models\Team;
 use App\Models\User;
 use App\Models\Workspace;
+use App\Policies\AttachmentPolicy;
+use App\Policies\MediaPolicy;
 use App\Policies\PipelinePolicy;
 use App\Policies\ProjectPolicy;
 use App\Policies\StatusPolicy;
@@ -29,7 +33,9 @@ class AuthServiceProvider extends ServiceProvider
         Project::class => ProjectPolicy::class,
         Status::class => StatusPolicy::class,
         Pipeline::class => PipelinePolicy::class,
-
+        Media::class => MediaPolicy::class,
+        Attachment::class => AttachmentPolicy::class,
+        Project::class => ProjectPolicy::class,
     ];
 
     /**

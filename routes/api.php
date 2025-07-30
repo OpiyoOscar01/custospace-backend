@@ -1,7 +1,10 @@
 <?php
+
+use App\Http\Controllers\Api\AttachmentController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\CommentController;
 use App\Http\Controllers\Api\ConversationController;
+use App\Http\Controllers\Api\MediaController;
 use App\Http\Controllers\Api\MentionController;
 use App\Http\Controllers\Api\MessageController;
 use App\Http\Controllers\Api\MilestoneController;
@@ -172,5 +175,21 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('mentions/{mention}', [MentionController::class, 'show']);
         Route::patch('mentions/{mention}/read', [MentionController::class, 'markAsRead']);
         Route::delete('mentions/{mention}', [MentionController::class, 'destroy']);
+
+        // Attachment Routes
+        Route::apiResource('attachments', AttachmentController::class);
+        Route::prefix('attachments')->controller(AttachmentController::class)->group(function () {
+            Route::get('{attachment}/download', 'download')->name('attachments.download');
+            Route::patch('{attachment}/metadata', 'updateMetadata')->name('attachments.updateMetadata');
+            Route::patch('{attachment}/move', 'moveToAttachable')->name('attachments.moveToAttachable');
+        });
+
+        // Media Routes
+        Route::apiResource('media', MediaController::class);
+        Route::prefix('media')->controller(MediaController::class)->group(function () {
+            Route::patch('{media}/collection', 'moveToCollection')->name('media.moveToCollection');
+            Route::patch('{media}/metadata', 'updateMetadata')->name('media.updateMetadata');
+            Route::post('{media}/duplicate', 'duplicate')->name('media.duplicate');
+        });
 
 });

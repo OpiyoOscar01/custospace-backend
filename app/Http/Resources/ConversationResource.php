@@ -1,10 +1,10 @@
-// app/Http/Resources/ConversationResource.php
 <?php
 
 namespace App\Http\Resources;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Facades\Auth;
 
 class ConversationResource extends JsonResource
 {
@@ -73,7 +73,7 @@ class ConversationResource extends JsonResource
     protected function getDisplayName(): string
     {
         if ($this->type === 'direct' && $this->relationLoaded('users')) {
-            $otherUser = $this->users->where('id', '!=', auth()->id())->first();
+            $otherUser = $this->users->where('id', '!=', Auth::id())->first();
             return $otherUser ? $otherUser->name : 'Unknown User';
         }
         
@@ -91,7 +91,7 @@ class ConversationResource extends JsonResource
             return null;
         }
         
-        $currentUser = $this->users->firstWhere('id', auth()->id());
+        $currentUser = $this->users->firstWhere('id', Auth::id());
         if (!$currentUser) {
             return null;
         }
@@ -103,7 +103,7 @@ class ConversationResource extends JsonResource
         
         return $this->messages()
             ->where('created_at', '>', $lastReadAt)
-            ->where('user_id', '!=', auth()->id())
+            ->where('user_id', '!=', Auth::id())
             ->count();
     }
     
@@ -118,7 +118,7 @@ class ConversationResource extends JsonResource
             return null;
         }
         
-        $currentUser = $this->users->firstWhere('id', auth()->id());
+        $currentUser = $this->users->firstWhere('id', Auth::id());
         
         return $currentUser ? $currentUser->pivot->role : null;
     }
