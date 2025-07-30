@@ -4,6 +4,7 @@ use App\Http\Controllers\Api\AttachmentController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\CommentController;
 use App\Http\Controllers\Api\ConversationController;
+use App\Http\Controllers\Api\GoalController;
 use App\Http\Controllers\Api\MediaController;
 use App\Http\Controllers\Api\MentionController;
 use App\Http\Controllers\Api\MessageController;
@@ -190,6 +191,25 @@ Route::middleware('auth:sanctum')->group(function () {
             Route::patch('{media}/collection', 'moveToCollection')->name('media.moveToCollection');
             Route::patch('{media}/metadata', 'updateMetadata')->name('media.updateMetadata');
             Route::post('{media}/duplicate', 'duplicate')->name('media.duplicate');
+        });
+
+        // Goal Management Routes
+        Route::prefix('goals')->controller(GoalController::class)->group(function () {
+            // RESTful routes
+            Route::get('/', 'index')->name('goals.index');
+            Route::post('/', 'store')->name('goals.store');
+            Route::get('{goal}', 'show')->name('goals.show');
+            Route::put('{goal}', 'update')->name('goals.update');
+            Route::patch('{goal}', 'update')->name('goals.patch');
+            Route::delete('{goal}', 'destroy')->name('goals.destroy');
+            
+            // Custom action routes
+            Route::patch('{goal}/activate', 'activate')->name('goals.activate');
+            Route::patch('{goal}/complete', 'complete')->name('goals.complete');
+            Route::patch('{goal}/cancel', 'cancel')->name('goals.cancel');
+            Route::patch('{goal}/progress', 'updateProgress')->name('goals.update-progress');
+            Route::post('{goal}/assign-user', 'assignUser')->name('goals.assign-user');
+            Route::post('{goal}/assign-tasks', 'assignTasks')->name('goals.assign-tasks');
         });
 
 });

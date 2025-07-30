@@ -17,6 +17,8 @@ use App\Policies\ProjectPolicy;
 use App\Policies\StatusPolicy;
 use App\Policies\TeamPolicy;
 use App\Policies\WorkspacePolicy;
+use App\Models\Goal;
+use App\Policies\GoalPolicy;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 use Illuminate\Support\Facades\Gate;
 
@@ -36,6 +38,8 @@ class AuthServiceProvider extends ServiceProvider
         Media::class => MediaPolicy::class,
         Attachment::class => AttachmentPolicy::class,
         Project::class => ProjectPolicy::class,
+        Goal::class => GoalPolicy::class,
+
     ];
 
     /**

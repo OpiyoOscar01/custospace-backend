@@ -413,6 +413,7 @@ return new class extends Migration
             $table->index(['checklist_id', 'order']);
             $table->index(['checklist_id', 'is_completed']);
         });
+ --------------------------------------------------------------------------------------------------------
 
         // Goal Management
         Schema::create('goals', function (Blueprint $table) {

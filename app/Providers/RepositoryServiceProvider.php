@@ -33,6 +33,8 @@ use App\Repositories\Contracts\MentionRepositoryInterface;
 use App\Repositories\AttachmentRepository;
 use App\Repositories\Contracts\MediaRepositoryInterface;
 use App\Repositories\MediaRepository;
+use App\Repositories\Contracts\GoalRepositoryInterface;
+use App\Repositories\GoalRepository;
 class RepositoryServiceProvider extends ServiceProvider
 {
     /**
@@ -56,6 +58,8 @@ class RepositoryServiceProvider extends ServiceProvider
         $this->app->bind(MentionRepositoryInterface::class, MentionRepository::class);
         $this->app->bind(AttachmentRepositoryInterface::class, AttachmentRepository::class);
         $this->app->bind(MediaRepositoryInterface::class, MediaRepository::class);
+        $this->app->bind( GoalRepositoryInterface::class,GoalRepository::class
+        );
     }
 
 
