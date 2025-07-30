@@ -1,6 +1,8 @@
 <?php
 
+use App\Http\Controllers\Api\ActivityLogController;
 use App\Http\Controllers\Api\AttachmentController;
+use App\Http\Controllers\Api\AuditLogController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\CommentController;
 use App\Http\Controllers\Api\ConversationController;
@@ -20,6 +22,7 @@ use App\Http\Controllers\Api\WorkspaceController;
 use App\Http\Controllers\Api\RecurringTaskController;
 use App\Http\Controllers\Api\TimeLogController;
 use App\Http\Controllers\Api\NotificationController;
+use App\Http\Controllers\Api\ReactionController;
 use App\Http\Controllers\Api\ReminderController;
 use Illuminate\Support\Facades\Route;
 
@@ -295,6 +298,53 @@ Route::middleware('auth:sanctum')->group(function () {
                 Route::get('user/unread', 'unreadNotifications');
                 Route::patch('user/mark-all-read', 'markAllAsRead');
                 Route::get('user/unread-count', 'unreadCount');
+            });
+
+                    // Activity Logs Routes
+            Route::prefix('activity-logs')->controller(ActivityLogController::class)->group(function () {
+                Route::get('/', 'index')->name('activity-logs.index');
+                Route::post('/', 'store')->name('activity-logs.store');
+                Route::get('/{activity_log}', 'show')->name('activity-logs.show');
+                Route::put('/{activity_log}', 'update')->name('activity-logs.update');
+                Route::delete('/{activity_log}', 'destroy')->name('activity-logs.destroy');
+                
+                // Custom endpoints
+                Route::get('/workspace/{workspaceId}', 'getWorkspaceActivities')->name('activity-logs.workspace');
+                Route::get('/statistics', 'getStatistics')->name('activity-logs.statistics');
+                Route::post('/cleanup', 'cleanup')->name('activity-logs.cleanup');
+                Route::post('/bulk', 'bulkStore')->name('activity-logs.bulk-store');
+            });
+
+            // Audit Logs Routes
+            Route::prefix('audit-logs')->controller(AuditLogController::class)->group(function () {
+                Route::get('/', 'index')->name('audit-logs.index');
+                Route::post('/', 'store')->name('audit-logs.store');
+                Route::get('/{audit_log}', 'show')->name('audit-logs.show');
+                Route::put('/{audit_log}', 'update')->name('audit-logs.update');
+                Route::delete('/{audit_log}', 'destroy')->name('audit-logs.destroy');
+                
+                // Custom endpoints
+                Route::get('/trail', 'getAuditTrail')->name('audit-logs.trail');
+                Route::get('/{audit_log}/changes', 'getFormattedChanges')->name('audit-logs.changes');
+                Route::post('/cleanup', 'cleanup')->name('audit-logs.cleanup');
+                Route::get('/event/{event}', 'getByEvent')->name('audit-logs.by-event');
+            });
+
+            // Reactions Routes
+            Route::prefix('reactions')->controller(ReactionController::class)->group(function () {
+                Route::get('/', 'index')->name('reactions.index');
+                Route::post('/', 'store')->name('reactions.store');
+                Route::get('/{reaction}', 'show')->name('reactions.show');
+                Route::put('/{reaction}', 'update')->name('reactions.update');
+                Route::delete('/{reaction}', 'destroy')->name('reactions.destroy');
+                
+                // Custom endpoints
+                Route::post('/toggle', 'toggle')->name('reactions.toggle');
+                Route::get('/item', 'getItemReactions')->name('reactions.item');
+                Route::get('/summary', 'getReactionSummary')->name('reactions.summary');
+                Route::get('/user', 'getUserReactions')->name('reactions.user');
+                Route::post('/bulk-toggle', 'bulkToggle')->name('reactions.bulk-toggle');
+                Route::get('/types', 'getAvailableTypes')->name('reactions.types');
             });
 
 

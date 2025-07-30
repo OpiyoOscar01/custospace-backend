@@ -349,35 +349,52 @@ Ensure API Resource formatting aligns with frontend expectations.
 Let's follow best and modern laravel practices.
 These are my migration files:
        
-        // Reminders
-        Schema::create('reminders', function (Blueprint $table) {
+        // Activity Logging
+        Schema::create('activity_logs', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
-            $table->morphs('remindable');
-            $table->datetime('remind_at');
-            $table->enum('type', ['email', 'in_app', 'sms'])->default('in_app');
-            $table->boolean('is_sent')->default(false);
+            $table->foreignId('user_id')->nullable()->constrained()->nullOnDelete();
+            $table->foreignId('workspace_id')->constrained()->cascadeOnDelete();
+            $table->string('action');
+            $table->string('description');
+            $table->morphs('subject');
+            $table->json('properties')->nullable();
+            $table->string('ip_address')->nullable();
+            $table->string('user_agent')->nullable();
             $table->timestamps();
             
-            $table->index(['user_id', 'remind_at']);
-            $table->index(['remindable_type', 'remindable_id']);
-            $table->index(['remind_at', 'is_sent']);
+            $table->index(['user_id', 'created_at']);
+            $table->index(['workspace_id', 'created_at']);
+            $table->index(['subject_type', 'subject_id']);
+            $table->index(['action', 'created_at']);
         });
 
-        // Notifications System
-        Schema::create('notifications', function (Blueprint $table) {
+        Schema::create('audit_logs', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
-            $table->string('type');
-            $table->text('title');
-            $table->text('message');
-            $table->json('data')->nullable();
-            $table->morphs('notifiable');
-            $table->boolean('is_read')->default(false);
-            $table->datetime('read_at')->nullable();
+            $table->foreignId('user_id')->nullable()->constrained()->nullOnDelete();
+            $table->string('event');
+            $table->morphs('auditable');
+            $table->json('old_values')->nullable();
+            $table->json('new_values')->nullable();
+            $table->string('ip_address')->nullable();
+            $table->string('user_agent')->nullable();
             $table->timestamps();
             
-            $table->index(['user_id', 'is_read']);
-            $table->index(['notifiable_type', 'notifiable_id']);
-            $table->index(['type', 'created_at']);
+            $table->index(['auditable_type', 'auditable_id']);
+            $table->index(['user_id', 'created_at']);
+            $table->index(['event', 'created_at']);
         });
+
+        // Reactions
+        Schema::create('reactions', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
+            $table->morphs('reactable');
+            $table->string('type'); // emoji type like 'thumbs_up', 'heart', etc.
+            $table->timestamps();
+            
+            $table->unique(['user_id', 'reactable_type', 'reactable_id', 'type']);
+            $table->index(['reactable_type', 'reactable_id']);
+        });
+
+
+     

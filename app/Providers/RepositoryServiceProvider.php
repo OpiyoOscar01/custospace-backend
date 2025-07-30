@@ -43,6 +43,12 @@ use App\Repositories\Contracts\NotificationRepositoryInterface;
 use App\Repositories\Contracts\ReminderRepositoryInterface;
 use App\Repositories\NotificationRepository;
 use App\Repositories\ReminderRepository;
+use App\Repositories\ActivityLogRepository;
+use App\Repositories\AuditLogRepository;
+use App\Repositories\Contracts\ActivityLogRepositoryInterface;
+use App\Repositories\Contracts\AuditLogRepositoryInterface;
+use App\Repositories\Contracts\ReactionRepositoryInterface;
+use App\Repositories\ReactionRepository;
 class RepositoryServiceProvider extends ServiceProvider
 {
     /**
@@ -71,6 +77,9 @@ class RepositoryServiceProvider extends ServiceProvider
         $this->app->bind(RecurringTaskRepositoryInterface::class,RecurringTaskRepository::class);
         $this->app->bind(ReminderRepositoryInterface::class,ReminderRepository::class);
         $this->app->bind(NotificationRepositoryInterface::class,NotificationRepository::class);
+        $this->app->bind(ActivityLogRepositoryInterface::class,ActivityLogRepository::class);
+        $this->app->bind(AuditLogRepositoryInterface::class,AuditLogRepository::class);
+        $this->app->bind(ReactionRepositoryInterface::class,ReactionRepository::class);
     }
 
 
