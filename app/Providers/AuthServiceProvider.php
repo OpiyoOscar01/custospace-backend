@@ -19,6 +19,10 @@ use App\Policies\TeamPolicy;
 use App\Policies\WorkspacePolicy;
 use App\Models\Goal;
 use App\Policies\GoalPolicy;
+use App\Models\RecurringTask;
+use App\Models\TimeLog;
+use App\Policies\RecurringTaskPolicy;
+use App\Policies\TimeLogPolicy;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 use Illuminate\Support\Facades\Gate;
 
@@ -39,6 +43,9 @@ class AuthServiceProvider extends ServiceProvider
         Attachment::class => AttachmentPolicy::class,
         Project::class => ProjectPolicy::class,
         Goal::class => GoalPolicy::class,
+        TimeLog::class => TimeLogPolicy::class,
+        RecurringTask::class => RecurringTaskPolicy::class,
+
 
     ];
 

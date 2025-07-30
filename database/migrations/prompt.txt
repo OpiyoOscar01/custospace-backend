@@ -146,7 +146,7 @@ These are the migration files:
 
 Prompt version 2.
 
-I want to scaffold a complete Laravel API structure for an entity named EntityName based on the Laravel migration schema snippet I will provide. The generated architecture should support both standard CRUD operations and custom actions, and follow a clean, modular, and maintainable design pattern.
+I want laravel code, not html and start by giving me the laravel commands & non laravel(shell commands) to execute for the file creations. Lest's stick to production and enterprise grade practices,I want to scaffold a complete Laravel API structure for an entity named EntityName based on the Laravel migration schema snippet I will provide. The generated architecture should support both standard CRUD operations and custom actions, and follow a clean, modular, and maintainable design pattern.
 
 ✅ Core Requirements
 Migration
@@ -348,31 +348,36 @@ Add PHPDoc comments and annotations for method/documentation clarity and also ad
 Ensure API Resource formatting aligns with frontend expectations.
 Let's follow best and modern laravel practices.
 These are my migration files:
-      // Goal Management
-        Schema::create('goals', function (Blueprint $table) {
+        // Time Tracking
+        Schema::create('time_logs', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('workspace_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('team_id')->nullable()->constrained()->nullOnDelete();
-            $table->foreignId('owner_id')->constrained('users')->cascadeOnDelete();
-            $table->string('name');
+            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('task_id')->constrained()->cascadeOnDelete();
+            $table->datetime('started_at');
+            $table->datetime('ended_at')->nullable();
+            $table->integer('duration')->nullable(); // in minutes
             $table->text('description')->nullable();
-            $table->enum('status', ['draft', 'active', 'completed', 'cancelled'])->default('draft');
-            $table->date('start_date')->nullable();
-            $table->date('end_date')->nullable();
-            $table->integer('progress')->default(0);
-            $table->json('metadata')->nullable();
+            $table->boolean('is_billable')->default(false);
+            $table->decimal('hourly_rate', 8, 2)->nullable();
             $table->timestamps();
             
-            $table->index(['workspace_id', 'status']);
-            $table->index(['team_id', 'status']);
-            $table->index(['owner_id', 'status']);
+            $table->index(['user_id', 'started_at']);
+            $table->index(['task_id', 'started_at']);
+            $table->index(['started_at', 'ended_at']);
         });
 
-        Schema::create('goal_tasks', function (Blueprint $table) {
+        // Recurring Tasks
+        Schema::create('recurring_tasks', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('goal_id')->constrained()->cascadeOnDelete();
             $table->foreignId('task_id')->constrained()->cascadeOnDelete();
+            $table->enum('frequency', ['daily', 'weekly', 'monthly', 'yearly'])->default('weekly');
+            $table->integer('interval')->default(1);
+            $table->json('days_of_week')->nullable(); // For weekly: [1,2,3,4,5]
+            $table->integer('day_of_month')->nullable(); // For monthly: 15
+            $table->datetime('next_due_date');
+            $table->datetime('end_date')->nullable();
+            $table->boolean('is_active')->default(true);
             $table->timestamps();
             
-            $table->unique(['goal_id', 'task_id']);
+            $table->index(['next_due_date', 'is_active']);
         });

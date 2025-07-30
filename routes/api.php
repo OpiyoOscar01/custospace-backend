@@ -17,6 +17,8 @@ use App\Http\Controllers\Api\TagController;
 use App\Http\Controllers\Api\TaskController;
 use App\Http\Controllers\Api\TeamController;
 use App\Http\Controllers\Api\WorkspaceController;
+use App\Http\Controllers\Api\RecurringTaskController;
+use App\Http\Controllers\Api\TimeLogController;
 use Illuminate\Support\Facades\Route;
 
 // Public auth routes
@@ -210,6 +212,42 @@ Route::middleware('auth:sanctum')->group(function () {
             Route::patch('{goal}/progress', 'updateProgress')->name('goals.update-progress');
             Route::post('{goal}/assign-user', 'assignUser')->name('goals.assign-user');
             Route::post('{goal}/assign-tasks', 'assignTasks')->name('goals.assign-tasks');
-        });
+            });
+                    /*
+            |--------------------------------------------------------------------------
+            | Time Log Routes
+            |--------------------------------------------------------------------------
+            */
+
+            Route::prefix('time-logs')->controller(TimeLogController::class)->group(function () {
+                Route::get('/', 'index');                          // GET /api/time-logs
+                Route::post('/', 'store');                         // POST /api/time-logs
+                Route::get('/summary', 'summary');                 // GET /api/time-logs/summary
+                Route::get('/billable', 'billable');              // GET /api/time-logs/billable
+                Route::post('/start', 'start');                   // POST /api/time-logs/start
+                Route::get('/{time_log}', 'show');                // GET /api/time-logs/{id}
+                Route::put('/{time_log}', 'update');              // PUT /api/time-logs/{id}
+                Route::delete('/{time_log}', 'destroy');          // DELETE /api/time-logs/{id}
+                Route::post('/{time_log}/stop', 'stop');          // POST /api/time-logs/{id}/stop
+            });
+
+            /*
+            |--------------------------------------------------------------------------
+            | Recurring Task Routes
+            |--------------------------------------------------------------------------
+            */
+
+            Route::prefix('recurring-tasks')->controller(RecurringTaskController::class)->group(function () {
+                Route::get('/', 'index');                                    // GET /api/recurring-tasks
+                Route::post('/', 'store');                                   // POST /api/recurring-tasks
+                Route::get('/due', 'due');                                   // GET /api/recurring-tasks/due
+                Route::post('/process-due', 'processDue');                   // POST /api/recurring-tasks/process-due
+                Route::get('/{recurring_task}', 'show');                     // GET /api/recurring-tasks/{id}
+                Route::put('/{recurring_task}', 'update');                   // PUT /api/recurring-tasks/{id}
+                Route::delete('/{recurring_task}', 'destroy');               // DELETE /api/recurring-tasks/{id}
+                Route::patch('/{recurring_task}/activate', 'activate');      // PATCH /api/recurring-tasks/{id}/activate
+                Route::patch('/{recurring_task}/deactivate', 'deactivate');  // PATCH /api/recurring-tasks/{id}/deactivate
+                Route::patch('/{recurring_task}/update-next-due-date', 'updateNextDueDate'); // PATCH /api/recurring-tasks/{id}/update-next-due-date
+            });
 
 });

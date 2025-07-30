@@ -34,6 +34,10 @@ use App\Repositories\AttachmentRepository;
 use App\Repositories\Contracts\MediaRepositoryInterface;
 use App\Repositories\MediaRepository;
 use App\Repositories\Contracts\GoalRepositoryInterface;
+use App\Repositories\Contracts\RecurringTaskRepositoryInterface;
+use App\Repositories\Contracts\TimeLogRepositoryInterface;
+use App\Repositories\RecurringTaskRepository;
+use App\Repositories\TimeLogRepository;
 use App\Repositories\GoalRepository;
 class RepositoryServiceProvider extends ServiceProvider
 {
@@ -58,8 +62,9 @@ class RepositoryServiceProvider extends ServiceProvider
         $this->app->bind(MentionRepositoryInterface::class, MentionRepository::class);
         $this->app->bind(AttachmentRepositoryInterface::class, AttachmentRepository::class);
         $this->app->bind(MediaRepositoryInterface::class, MediaRepository::class);
-        $this->app->bind( GoalRepositoryInterface::class,GoalRepository::class
-        );
+        $this->app->bind( GoalRepositoryInterface::class,GoalRepository::class);
+        $this->app->bind(TimeLogRepositoryInterface::class,TimeLogRepository::class);
+        $this->app->bind(RecurringTaskRepositoryInterface::class,RecurringTaskRepository::class);
     }
 
 

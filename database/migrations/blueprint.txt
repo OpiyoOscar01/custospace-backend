@@ -443,6 +443,8 @@ return new class extends Migration
             
             $table->unique(['goal_id', 'task_id']);
         });
+ --------------------------------------------------------------------------------------------------------
+
 
         // Time Tracking
         Schema::create('time_logs', function (Blueprint $table) {
@@ -477,6 +479,7 @@ return new class extends Migration
             
             $table->index(['next_due_date', 'is_active']);
         });
+        --------------------------------------------------------------------------------------------------------
 
         // Reminders
         Schema::create('reminders', function (Blueprint $table) {
