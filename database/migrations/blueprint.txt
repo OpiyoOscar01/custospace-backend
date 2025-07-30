@@ -514,6 +514,9 @@ return new class extends Migration
             $table->index(['type', 'created_at']);
         });
 
+ --------------------------------------------------------------------------------------------------------
+
+
         // Activity Logging
         Schema::create('activity_logs', function (Blueprint $table) {
             $table->id();

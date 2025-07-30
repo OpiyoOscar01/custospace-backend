@@ -39,6 +39,10 @@ use App\Repositories\Contracts\TimeLogRepositoryInterface;
 use App\Repositories\RecurringTaskRepository;
 use App\Repositories\TimeLogRepository;
 use App\Repositories\GoalRepository;
+use App\Repositories\Contracts\NotificationRepositoryInterface;
+use App\Repositories\Contracts\ReminderRepositoryInterface;
+use App\Repositories\NotificationRepository;
+use App\Repositories\ReminderRepository;
 class RepositoryServiceProvider extends ServiceProvider
 {
     /**
@@ -65,6 +69,8 @@ class RepositoryServiceProvider extends ServiceProvider
         $this->app->bind( GoalRepositoryInterface::class,GoalRepository::class);
         $this->app->bind(TimeLogRepositoryInterface::class,TimeLogRepository::class);
         $this->app->bind(RecurringTaskRepositoryInterface::class,RecurringTaskRepository::class);
+        $this->app->bind(ReminderRepositoryInterface::class,ReminderRepository::class);
+        $this->app->bind(NotificationRepositoryInterface::class,NotificationRepository::class);
     }
 
 

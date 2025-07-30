@@ -19,6 +19,8 @@ use App\Http\Controllers\Api\TeamController;
 use App\Http\Controllers\Api\WorkspaceController;
 use App\Http\Controllers\Api\RecurringTaskController;
 use App\Http\Controllers\Api\TimeLogController;
+use App\Http\Controllers\Api\NotificationController;
+use App\Http\Controllers\Api\ReminderController;
 use Illuminate\Support\Facades\Route;
 
 // Public auth routes
@@ -249,5 +251,51 @@ Route::middleware('auth:sanctum')->group(function () {
                 Route::patch('/{recurring_task}/deactivate', 'deactivate');  // PATCH /api/recurring-tasks/{id}/deactivate
                 Route::patch('/{recurring_task}/update-next-due-date', 'updateNextDueDate'); // PATCH /api/recurring-tasks/{id}/update-next-due-date
             });
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | Reminder API Routes
+            |--------------------------------------------------------------------------
+            */
+
+            Route::prefix('reminders')->controller(ReminderController::class)->group(function () {
+                // RESTful routes
+                Route::get('/', 'index');
+                Route::post('/', 'store');
+                Route::get('{reminder}', 'show');
+                Route::put('{reminder}', 'update');
+                Route::delete('{reminder}', 'destroy');
+                
+                // Custom routes
+                Route::patch('{reminder}/activate', 'activate');
+                Route::patch('{reminder}/deactivate', 'deactivate');
+                Route::get('user/my-reminders', 'userReminders');
+                Route::post('process-pending', 'processPending');
+            });
+
+            /*
+            |--------------------------------------------------------------------------
+            | Notification API Routes
+            |--------------------------------------------------------------------------
+            */
+
+            Route::prefix('notifications')->controller(NotificationController::class)->group(function () {
+                // RESTful routes
+                Route::get('/', 'index');
+                Route::post('/', 'store');
+                Route::get('{notification}', 'show');
+                Route::put('{notification}', 'update');
+                Route::delete('{notification}', 'destroy');
+                
+                // Custom routes
+                Route::patch('{notification}/read', 'markAsRead');
+                Route::patch('{notification}/unread', 'markAsUnread');
+                Route::get('user/my-notifications', 'userNotifications');
+                Route::get('user/unread', 'unreadNotifications');
+                Route::patch('user/mark-all-read', 'markAllAsRead');
+                Route::get('user/unread-count', 'unreadCount');
+            });
+
 
 });

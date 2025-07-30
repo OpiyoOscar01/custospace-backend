@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use App\Models\Attachment;
 use App\Models\Media;
+use App\Models\Notification;
 use App\Models\Pipeline;
 use App\Models\Project;
 use App\Models\Status;
@@ -14,13 +15,16 @@ use App\Policies\AttachmentPolicy;
 use App\Policies\MediaPolicy;
 use App\Policies\PipelinePolicy;
 use App\Policies\ProjectPolicy;
+use App\Policies\ReminderPolicy;
 use App\Policies\StatusPolicy;
 use App\Policies\TeamPolicy;
 use App\Policies\WorkspacePolicy;
 use App\Models\Goal;
 use App\Policies\GoalPolicy;
 use App\Models\RecurringTask;
+use App\Models\Reminder;
 use App\Models\TimeLog;
+use App\Policies\NotificationPolicy;
 use App\Policies\RecurringTaskPolicy;
 use App\Policies\TimeLogPolicy;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
@@ -46,6 +50,8 @@ class AuthServiceProvider extends ServiceProvider
         Goal::class => GoalPolicy::class,
         TimeLog::class => TimeLogPolicy::class,
         RecurringTask::class => RecurringTaskPolicy::class,
+        Reminder::class => ReminderPolicy::class,
+        Notification::class => NotificationPolicy::class,
 
 
     ];
