@@ -4,8 +4,12 @@ namespace App\Policies;
 
 use App\Models\User;
 use App\Models\UserPreference;
-use Illuminate\Auth\Access\Response;
 
+/**
+ * Class UserPreferencePolicy
+ * 
+ * Handles authorization for UserPreference operations
+ */
 class UserPreferencePolicy
 {
     /**
@@ -13,7 +17,8 @@ class UserPreferencePolicy
      */
     public function viewAny(User $user): bool
     {
-        return false;
+        // Allow admins to view all preferences, users can view their own
+        return $user->hasRole('admin') || true;
     }
 
     /**
@@ -21,7 +26,8 @@ class UserPreferencePolicy
      */
     public function view(User $user, UserPreference $userPreference): bool
     {
-        return false;
+        // Users can view their own preferences, admins can view all
+        return $user->id === $userPreference->user_id || $user->hasRole('admin');
     }
 
     /**
@@ -29,7 +35,8 @@ class UserPreferencePolicy
      */
     public function create(User $user): bool
     {
-        return false;
+        // All authenticated users can create preferences
+        return true;
     }
 
     /**
@@ -37,7 +44,8 @@ class UserPreferencePolicy
      */
     public function update(User $user, UserPreference $userPreference): bool
     {
-        return false;
+        // Users can update their own preferences, admins can update all
+        return $user->id === $userPreference->user_id || $user->hasRole('admin');
     }
 
     /**
@@ -45,7 +53,8 @@ class UserPreferencePolicy
      */
     public function delete(User $user, UserPreference $userPreference): bool
     {
-        return false;
+        // Users can delete their own preferences, admins can delete all
+        return $user->id === $userPreference->user_id || $user->hasRole('admin');
     }
 
     /**
@@ -53,7 +62,7 @@ class UserPreferencePolicy
      */
     public function restore(User $user, UserPreference $userPreference): bool
     {
-        return false;
+        return $this->update($user, $userPreference);
     }
 
     /**
@@ -61,6 +70,6 @@ class UserPreferencePolicy
      */
     public function forceDelete(User $user, UserPreference $userPreference): bool
     {
-        return false;
+        return $user->hasRole('admin');
     }
 }

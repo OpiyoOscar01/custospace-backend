@@ -3,14 +3,13 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Rule;
 
 /**
- * Class UpdateUserPreferenceRequest
+ * Class CreateApiTokenRequest
  * 
- * Handles validation for updating an existing user preference
+ * Handles validation for creating a new API token
  */
-class UpdateUserPreferenceRequest extends FormRequest
+class CreateApiTokenRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -27,26 +26,36 @@ class UpdateUserPreferenceRequest extends FormRequest
      */
     public function rules(): array
     {
-        $userPreference = $this->route('user_preference');
-        
         return [
             'user_id' => [
-                'sometimes',
+                'required',
                 'integer',
                 'exists:users,id'
             ],
-            'key' => [
+            'name' => [
+                'required',
+                'string',
+                'max:255'
+            ],
+            'token' => [
                 'sometimes',
                 'string',
-                'max:255',
-                // Ensure unique combination of user_id and key, excluding current record
-                Rule::unique('user_preferences', 'key')->where(function ($query) use ($userPreference) {
-                    return $query->where('user_id', $this->user_id ?? $userPreference->user_id);
-                })->ignore($userPreference->id ?? null)
+                'max:80',
+                'unique:api_tokens,token'
             ],
-            'value' => [
+            'abilities' => [
                 'sometimes',
-                'string'
+                'array'
+            ],
+            'abilities.*' => [
+                'string',
+                'max:255'
+            ],
+            'expires_at' => [
+                'sometimes',
+                'nullable',
+                'date',
+                'after:now'
             ]
         ];
     }
@@ -57,8 +66,11 @@ class UpdateUserPreferenceRequest extends FormRequest
     public function messages(): array
     {
         return [
+            'user_id.required' => 'User ID is required.',
             'user_id.exists' => 'The selected user does not exist.',
-            'key.unique' => 'This preference key already exists for the user.',
+            'name.required' => 'Token name is required.',
+            'token.unique' => 'This token already exists.',
+            'expires_at.after' => 'Expiration date must be in the future.',
         ];
     }
 
@@ -69,8 +81,8 @@ class UpdateUserPreferenceRequest extends FormRequest
     {
         return [
             'user_id' => 'user',
-            'key' => 'preference key',
-            'value' => 'preference value',
+            'name' => 'token name',
+            'expires_at' => 'expiration date',
         ];
     }
 }

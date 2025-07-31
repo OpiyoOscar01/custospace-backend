@@ -32,6 +32,8 @@ use App\Http\Controllers\Api\FormResponseController;
 use App\Http\Controllers\Api\WikiController;
 use App\Http\Controllers\Api\EventController;
 use App\Http\Controllers\Api\EventParticipantController;
+use App\Http\Controllers\Api\ApiTokenController;
+use App\Http\Controllers\Api\UserPreferenceController;
 
 use Illuminate\Support\Facades\Route;
 
@@ -512,6 +514,46 @@ Route::middleware('auth:sanctum')->group(function () {
                 Route::prefix('participants')->controller(EventParticipantController::class)->group(function () {
                     Route::get('my-participations', 'myParticipations');
                 });
+                
+               
+                // User Preferences Routes
+                Route::prefix('user-preferences')->controller(UserPreferenceController::class)->group(function () {
+                    Route::get('/', 'index')->name('api.user-preferences.index');
+                    Route::post('/', 'store')->name('api.user-preferences.store');
+                    Route::get('{user_preference}', 'show')->name('api.user-preferences.show');
+                    Route::put('{user_preference}', 'update')->name('api.user-preferences.update');
+                    Route::patch('{user_preference}', 'update')->name('api.user-preferences.patch');
+                    Route::delete('{user_preference}', 'destroy')->name('api.user-preferences.destroy');
+                });
+
+                // User-specific preference routes
+                Route::prefix('users/{userId}/preferences')->controller(UserPreferenceController::class)->group(function () {
+                    Route::get('/', 'getUserPreferences')->name('api.users.preferences.index');
+                    Route::post('/', 'setUserPreference')->name('api.users.preferences.set');
+                    Route::post('/bulk', 'bulkSetUserPreferences')->name('api.users.preferences.bulk-set');
+                });
+
+                // API Tokens Routes
+                Route::prefix('api-tokens')->controller(ApiTokenController::class)->group(function () {
+                    Route::get('/', 'index')->name('api.api-tokens.index');
+                    Route::post('/', 'store')->name('api.api-tokens.store');
+                    Route::get('{api_token}', 'show')->name('api.api-tokens.show');
+                    Route::put('{api_token}', 'update')->name('api.api-tokens.update');
+                    Route::patch('{api_token}', 'update')->name('api.api-tokens.patch');
+                    Route::delete('{api_token}', 'destroy')->name('api.api-tokens.destroy');
+                    
+                    // Custom token actions
+                    Route::patch('{api_token}/revoke', 'revoke')->name('api.api-tokens.revoke');
+                    Route::post('cleanup', 'cleanup')->name('api.api-tokens.cleanup');
+                });
+
+                // User-specific token routes
+                Route::prefix('users/{userId}/tokens')->controller(ApiTokenController::class)->group(function () {
+                    Route::get('/', 'getUserTokens')->name('api.users.tokens.index');
+                    Route::get('/active', 'getUserActiveTokens')->name('api.users.tokens.active');
+                    Route::delete('/revoke-all', 'revokeAll')->name('api.users.tokens.revoke-all');
+                });
+
 });
 
 
