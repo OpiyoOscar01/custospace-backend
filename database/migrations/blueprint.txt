@@ -781,6 +781,9 @@ return new class extends Migration
             $table->index(['workspace_id', 'status']);
         });
 
+             --------------------------------------------------------------------------------------------------------
+
+
         // Invitation System
         Schema::create('invitations', function (Blueprint $table) {
             $table->id();

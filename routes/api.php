@@ -34,6 +34,8 @@ use App\Http\Controllers\Api\EventController;
 use App\Http\Controllers\Api\EventParticipantController;
 use App\Http\Controllers\Api\ApiTokenController;
 use App\Http\Controllers\Api\UserPreferenceController;
+use App\Http\Controllers\Api\IntegrationController;
+use App\Http\Controllers\Api\PlanController;
 
 use Illuminate\Support\Facades\Route;
 
@@ -552,6 +554,52 @@ Route::middleware('auth:sanctum')->group(function () {
                     Route::get('/', 'getUserTokens')->name('api.users.tokens.index');
                     Route::get('/active', 'getUserActiveTokens')->name('api.users.tokens.active');
                     Route::delete('/revoke-all', 'revokeAll')->name('api.users.tokens.revoke-all');
+                });
+                /*
+                |--------------------------------------------------------------------------
+                | Integration Routes
+                |--------------------------------------------------------------------------
+                */
+
+                Route::prefix('integrations')->controller(IntegrationController::class)->group(function () {
+                    Route::get('/', 'index');
+                    Route::post('/', 'store');
+                    Route::get('/{integration}', 'show');
+                    Route::put('/{integration}', 'update');
+                    Route::patch('/{integration}', 'update');
+                    Route::delete('/{integration}', 'destroy');
+                    
+                    // Custom actions
+                    Route::patch('/{integration}/activate', 'activate');
+                    Route::patch('/{integration}/deactivate', 'deactivate');
+                    Route::post('/{integration}/test-connection', 'testConnection');
+                    
+                    // Workspace-specific integrations
+                    Route::get('/workspace/{workspaceId}', 'getByWorkspace');
+                });
+
+                /*
+                |--------------------------------------------------------------------------
+                | Plan Routes
+                |--------------------------------------------------------------------------
+                */
+
+                Route::prefix('plans')->controller(PlanController::class)->group(function () {
+                    Route::get('/', 'index');
+                    Route::post('/', 'store');
+                    Route::get('/active', 'active');
+                    Route::get('/popular', 'popular');
+                    Route::get('/slug/{slug}', 'findBySlug');
+                    Route::get('/{plan}', 'show');
+                    Route::put('/{plan}', 'update');
+                    Route::patch('/{plan}', 'update');
+                    Route::delete('/{plan}', 'destroy');
+                    
+                    // Custom actions
+                    Route::patch('/{plan}/activate', 'activate');
+                    Route::patch('/{plan}/deactivate', 'deactivate');
+                    Route::patch('/{plan}/mark-popular', 'markPopular');
+                    Route::patch('/{plan}/remove-popular', 'removePopular');
                 });
 
 });

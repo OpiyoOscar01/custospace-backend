@@ -67,6 +67,10 @@ use App\Repositories\ApiTokenRepository;
 use App\Repositories\Contracts\ApiTokenRepositoryInterface;
 use App\Repositories\Contracts\UserPreferenceRepositoryInterface;
 use App\Repositories\UserPreferenceRepository;
+use App\Repositories\Contracts\IntegrationRepositoryInterface;
+use App\Repositories\Contracts\PlanRepositoryInterface;
+use App\Repositories\IntegrationRepository;
+use App\Repositories\PlanRepository;
 class RepositoryServiceProvider extends ServiceProvider
 {
     /**
@@ -107,6 +111,8 @@ class RepositoryServiceProvider extends ServiceProvider
         $this->app->bind(EventParticipantRepositoryInterface::class,EventParticipantRepository::class);
         $this->app->bind(UserPreferenceRepositoryInterface::class,UserPreferenceRepository::class);
         $this->app->bind(ApiTokenRepositoryInterface::class,ApiTokenRepository::class);
+        $this->app->bind(IntegrationRepositoryInterface::class,IntegrationRepository::class);
+        $this->app->bind(PlanRepositoryInterface::class,PlanRepository::class);
     }
 
 

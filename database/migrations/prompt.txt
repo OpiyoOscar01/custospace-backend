@@ -349,33 +349,32 @@ Ensure API Resource formatting aligns with frontend expectations.
 Let's follow best and modern laravel practices.
 These are my migration files:
       
-   Schema::create('integrations', function (Blueprint $table) {
+   Schema::create('subscriptions', function (Blueprint $table) {
             $table->id();
             $table->foreignId('workspace_id')->constrained()->cascadeOnDelete();
-            $table->string('name');
-            $table->string('type'); // slack, github, gitlab, etc.
-            $table->json('configuration');
-            $table->boolean('is_active')->default(true);
+            $table->foreignId('plan_id')->constrained()->cascadeOnDelete();
+            $table->string('stripe_id')->nullable();
+            $table->string('stripe_status')->nullable();
+            $table->string('stripe_price')->nullable();
+            $table->integer('quantity')->default(1);
+            $table->timestamp('trial_ends_at')->nullable();
+            $table->timestamp('ends_at')->nullable();
             $table->timestamps();
             
-            $table->index(['workspace_id', 'type']);
+            $table->index(['workspace_id', 'stripe_status']);
         });
 
-        // SaaS Features
-        Schema::create('plans', function (Blueprint $table) {
+        Schema::create('invoices', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->string('slug')->unique();
-            $table->text('description')->nullable();
-            $table->decimal('price', 8, 2);
-            $table->enum('billing_cycle', ['monthly', 'yearly'])->default('monthly');
-            $table->integer('max_users')->nullable();
-            $table->integer('max_projects')->nullable();
-            $table->integer('max_storage_gb')->nullable();
-            $table->json('features')->nullable();
-            $table->boolean('is_active')->default(true);
-            $table->boolean('is_popular')->default(false);
+            $table->foreignId('workspace_id')->constrained()->cascadeOnDelete();
+            $table->string('stripe_id')->unique();
+            $table->string('number');
+            $table->decimal('amount', 10, 2);
+            $table->string('currency', 3);
+            $table->enum('status', ['draft', 'open', 'paid', 'uncollectible', 'void'])->default('draft');
+            $table->timestamp('due_date')->nullable();
+            $table->json('line_items')->nullable();
             $table->timestamps();
             
-            $table->index(['is_active', 'price']);
+            $table->index(['workspace_id', 'status']);
         });
