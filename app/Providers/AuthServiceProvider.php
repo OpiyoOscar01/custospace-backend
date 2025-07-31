@@ -27,6 +27,10 @@ use App\Models\TimeLog;
 use App\Policies\NotificationPolicy;
 use App\Policies\RecurringTaskPolicy;
 use App\Policies\TimeLogPolicy;
+use App\Models\Form;
+use App\Models\FormResponse;
+use App\Policies\FormPolicy;
+use App\Policies\FormResponsePolicy;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 use Illuminate\Support\Facades\Gate;
 use PharIo\Manifest\License;
@@ -52,6 +56,8 @@ class AuthServiceProvider extends ServiceProvider
         RecurringTask::class => RecurringTaskPolicy::class,
         Reminder::class => ReminderPolicy::class,
         Notification::class => NotificationPolicy::class,
+        Form::class => FormPolicy::class,
+        FormResponse::class => FormResponsePolicy::class,
 
 
     ];

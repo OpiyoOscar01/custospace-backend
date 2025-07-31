@@ -53,6 +53,10 @@ use App\Repositories\Contracts\CustomFieldValueRepositoryInterface;
 use App\Repositories\CustomFieldRepository;
 use App\Repositories\CustomFieldValueRepository;
 use App\Repositories\ReactionRepository;
+use App\Repositories\Contracts\FormRepositoryInterface;
+use App\Repositories\Contracts\FormResponseRepositoryInterface;
+use App\Repositories\FormRepository;
+use App\Repositories\FormResponseRepository;
 class RepositoryServiceProvider extends ServiceProvider
 {
     /**
@@ -86,6 +90,8 @@ class RepositoryServiceProvider extends ServiceProvider
         $this->app->bind(ReactionRepositoryInterface::class,ReactionRepository::class);
         $this->app->bind(CustomFieldRepositoryInterface::class,CustomFieldRepository::class);
         $this->app->bind(CustomFieldValueRepositoryInterface::class,CustomFieldValueRepository::class);
+        $this->app->bind(FormRepositoryInterface::class,FormRepository::class);
+        $this->app->bind(FormResponseRepositoryInterface::class,FormResponseRepository::class);
     }
 
 

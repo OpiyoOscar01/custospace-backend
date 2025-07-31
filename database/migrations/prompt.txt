@@ -349,31 +349,32 @@ Ensure API Resource formatting aligns with frontend expectations.
 Let's follow best and modern laravel practices.
 These are my migration files:
        
-      
-        // Custom Fields System
-        Schema::create('custom_fields', function (Blueprint $table) {
+        // Forms System
+        Schema::create('forms', function (Blueprint $table) {
             $table->id();
             $table->foreignId('workspace_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('created_by_id')->constrained('users')->cascadeOnDelete();
             $table->string('name');
-            $table->string('key');
-            $table->enum('type', ['text', 'number', 'date', 'select', 'multiselect', 'checkbox', 'textarea', 'url', 'email']);
-            $table->string('applies_to'); // tasks, projects, users, etc.
-            $table->json('options')->nullable(); // For select/multiselect
-            $table->boolean('is_required')->default(false);
-            $table->integer('order')->default(0);
+            $table->string('slug');
+            $table->text('description')->nullable();
+            $table->json('fields');
+            $table->json('settings')->nullable();
+            $table->boolean('is_active')->default(true);
             $table->timestamps();
             
-            $table->unique(['workspace_id', 'applies_to', 'key']);
-            $table->index(['workspace_id', 'applies_to']);
+            $table->unique(['workspace_id', 'slug']);
+            $table->index(['workspace_id', 'is_active']);
         });
 
-        Schema::create('custom_field_values', function (Blueprint $table) {
+        Schema::create('form_responses', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('custom_field_id')->constrained()->cascadeOnDelete();
-            $table->morphs('entity');
-            $table->text('value')->nullable();
+            $table->foreignId('form_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('user_id')->nullable()->constrained()->nullOnDelete();
+            $table->json('data');
+            $table->string('ip_address')->nullable();
+            $table->string('user_agent')->nullable();
             $table->timestamps();
             
-            $table->unique(['custom_field_id', 'entity_type', 'entity_id']);
-            $table->index(['entity_type', 'entity_id']);
+            $table->index(['form_id', 'created_at']);
+            $table->index(['user_id', 'created_at']);
         });

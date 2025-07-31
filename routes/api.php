@@ -26,6 +26,8 @@ use App\Http\Controllers\Api\ReactionController;
 use App\Http\Controllers\Api\ReminderController;
 use App\Http\Controllers\Api\CustomFieldController;
 use App\Http\Controllers\Api\CustomFieldValueController;
+use App\Http\Controllers\Api\FormController;
+use App\Http\Controllers\Api\FormResponseController;
 use Illuminate\Support\Facades\Route;
 
 // Public auth routes
@@ -374,5 +376,56 @@ Route::middleware('auth:sanctum')->group(function () {
                 Route::delete('{customFieldValue}', 'destroy');
             });
 
+            
+
+/*
+|--------------------------------------------------------------------------
+| Form Management API Routes
+|--------------------------------------------------------------------------
+*/
+
+Route::prefix('forms')->name('forms.')->group(function () {
+    // Standard RESTful routes
+    Route::apiResource('/', FormController::class)->parameters(['' => 'form']);
+    
+    // Custom form actions
+    Route::controller(FormController::class)->group(function () {
+        Route::patch('{form}/activate', 'activate')->name('activate');
+        Route::patch('{form}/deactivate', 'deactivate')->name('deactivate');
+        Route::post('{form}/duplicate', 'duplicate')->name('duplicate');
+        Route::get('{form}/analytics', 'analytics')->name('analytics');
+        Route::get('{form}/export', 'export')->name('export');
+    });
+});
+
+    /*
+    |--------------------------------------------------------------------------
+    | Form Response Management API Routes
+    |--------------------------------------------------------------------------
+    */
+
+    Route::prefix('form-responses')->name('form-responses.')->group(function () {
+        // Standard RESTful routes
+        Route::apiResource('/', FormResponseController::class)->parameters(['' => 'form_response']);
+        
+        // Custom response actions
+        Route::controller(FormResponseController::class)->group(function () {
+            Route::get('form/{form}', 'getByForm')->name('by-form');
+            Route::get('my-responses', 'getUserResponses')->name('my-responses');
+            Route::delete('bulk-delete', 'bulkDelete')->name('bulk-delete');
+        });
+    });
 
 });
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Public Form Submission Routes (No Authentication Required)
+    |--------------------------------------------------------------------------
+    */
+
+    Route::prefix('public/forms')->name('public.forms.')->group(function () {
+        Route::post('{form}/submit', [FormResponseController::class, 'store'])->name('submit');
+        Route::get('{workspace:slug}/{form:slug}', [FormController::class, 'show'])->name('show');
+    });
