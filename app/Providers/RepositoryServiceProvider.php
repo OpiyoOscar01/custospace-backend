@@ -57,6 +57,8 @@ use App\Repositories\Contracts\FormRepositoryInterface;
 use App\Repositories\Contracts\FormResponseRepositoryInterface;
 use App\Repositories\FormRepository;
 use App\Repositories\FormResponseRepository;
+use App\Repositories\Contracts\WikiRepositoryInterface;
+use App\Repositories\WikiRepository;
 class RepositoryServiceProvider extends ServiceProvider
 {
     /**
@@ -92,6 +94,7 @@ class RepositoryServiceProvider extends ServiceProvider
         $this->app->bind(CustomFieldValueRepositoryInterface::class,CustomFieldValueRepository::class);
         $this->app->bind(FormRepositoryInterface::class,FormRepository::class);
         $this->app->bind(FormResponseRepositoryInterface::class,FormResponseRepository::class);
+        $this->app->bind(WikiRepositoryInterface::class,WikiRepository::class);
     }
 
 

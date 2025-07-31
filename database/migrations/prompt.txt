@@ -348,33 +348,35 @@ Add PHPDoc comments and annotations for method/documentation clarity and also ad
 Ensure API Resource formatting aligns with frontend expectations.
 Let's follow best and modern laravel practices.
 These are my migration files:
-       
-        // Forms System
-        Schema::create('forms', function (Blueprint $table) {
+      
+
+        // Wiki/Knowledge Base
+        Schema::create('wikis', function (Blueprint $table) {
             $table->id();
             $table->foreignId('workspace_id')->constrained()->cascadeOnDelete();
             $table->foreignId('created_by_id')->constrained('users')->cascadeOnDelete();
-            $table->string('name');
+            $table->foreignId('parent_id')->nullable()->constrained('wikis')->nullOnDelete();
+            $table->string('title');
             $table->string('slug');
-            $table->text('description')->nullable();
-            $table->json('fields');
-            $table->json('settings')->nullable();
-            $table->boolean('is_active')->default(true);
+            $table->longText('content');
+            $table->boolean('is_published')->default(false);
+            $table->json('metadata')->nullable();
             $table->timestamps();
             
             $table->unique(['workspace_id', 'slug']);
-            $table->index(['workspace_id', 'is_active']);
+            $table->index(['workspace_id', 'is_published']);
+            $table->index(['parent_id', 'title']);
         });
 
-        Schema::create('form_responses', function (Blueprint $table) {
+        Schema::create('wiki_revisions', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('form_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('user_id')->nullable()->constrained()->nullOnDelete();
-            $table->json('data');
-            $table->string('ip_address')->nullable();
-            $table->string('user_agent')->nullable();
+            $table->foreignId('wiki_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
+            $table->string('title');
+            $table->longText('content');
+            $table->text('summary')->nullable();
             $table->timestamps();
             
-            $table->index(['form_id', 'created_at']);
+            $table->index(['wiki_id', 'created_at']);
             $table->index(['user_id', 'created_at']);
         });

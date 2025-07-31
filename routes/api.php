@@ -18,6 +18,7 @@ use App\Http\Controllers\Api\SubtaskController;
 use App\Http\Controllers\Api\TagController;
 use App\Http\Controllers\Api\TaskController;
 use App\Http\Controllers\Api\TeamController;
+use App\Http\Controllers\Api\WikiRevisionController;
 use App\Http\Controllers\Api\WorkspaceController;
 use App\Http\Controllers\Api\RecurringTaskController;
 use App\Http\Controllers\Api\TimeLogController;
@@ -28,6 +29,8 @@ use App\Http\Controllers\Api\CustomFieldController;
 use App\Http\Controllers\Api\CustomFieldValueController;
 use App\Http\Controllers\Api\FormController;
 use App\Http\Controllers\Api\FormResponseController;
+use App\Http\Controllers\Api\WikiController;
+
 use Illuminate\Support\Facades\Route;
 
 // Public auth routes
@@ -378,54 +381,112 @@ Route::middleware('auth:sanctum')->group(function () {
 
             
 
-/*
-|--------------------------------------------------------------------------
-| Form Management API Routes
-|--------------------------------------------------------------------------
-*/
+            /*
+            |--------------------------------------------------------------------------
+            | Form Management API Routes
+            |--------------------------------------------------------------------------
+            */
 
-Route::prefix('forms')->name('forms.')->group(function () {
-    // Standard RESTful routes
-    Route::apiResource('/', FormController::class)->parameters(['' => 'form']);
-    
-    // Custom form actions
-    Route::controller(FormController::class)->group(function () {
-        Route::patch('{form}/activate', 'activate')->name('activate');
-        Route::patch('{form}/deactivate', 'deactivate')->name('deactivate');
-        Route::post('{form}/duplicate', 'duplicate')->name('duplicate');
-        Route::get('{form}/analytics', 'analytics')->name('analytics');
-        Route::get('{form}/export', 'export')->name('export');
-    });
+            Route::prefix('forms')->name('forms.')->group(function () {
+                // Standard RESTful routes
+                Route::apiResource('/', FormController::class)->parameters(['' => 'form']);
+                
+                // Custom form actions
+                Route::controller(FormController::class)->group(function () {
+                    Route::patch('{form}/activate', 'activate')->name('activate');
+                    Route::patch('{form}/deactivate', 'deactivate')->name('deactivate');
+                    Route::post('{form}/duplicate', 'duplicate')->name('duplicate');
+                    Route::get('{form}/analytics', 'analytics')->name('analytics');
+                    Route::get('{form}/export', 'export')->name('export');
+                });
+            });
+
+                /*
+                |--------------------------------------------------------------------------
+                | Form Response Management API Routes
+                |--------------------------------------------------------------------------
+                */
+
+                Route::prefix('form-responses')->name('form-responses.')->group(function () {
+                    // Standard RESTful routes
+                    Route::apiResource('/', FormResponseController::class)->parameters(['' => 'form_response']);
+                    
+                    // Custom response actions
+                    Route::controller(FormResponseController::class)->group(function () {
+                        Route::get('form/{form}', 'getByForm')->name('by-form');
+                        Route::get('my-responses', 'getUserResponses')->name('my-responses');
+                        Route::delete('bulk-delete', 'bulkDelete')->name('bulk-delete');
+                    });
+                });
+                
+
+
+                // RESTful Wiki Routes
+                Route::apiResource('wikis', WikiController::class);
+                
+                // Custom Wiki Routes
+                Route::prefix('wikis')->controller(WikiController::class)->group(function () {
+                    
+                    // Publication management
+                    Route::patch('{wiki}/toggle-publication', 'togglePublication')
+                        ->name('wikis.toggle-publication');
+                    
+                    // Collaboration
+                    Route::post('{wiki}/assign-user', 'assignUser')
+                        ->name('wikis.assign-user');
+                    
+                    // Navigation & Search
+                    Route::get('{wiki}/breadcrumb', 'breadcrumb')
+                        ->name('wikis.breadcrumb');
+                    
+                    Route::get('tree', 'tree')
+                        ->name('wikis.tree');
+                    
+                    Route::get('search', 'search')
+                        ->name('wikis.search');
+                    
+                    Route::get('find-by-slug', 'findBySlug')
+                        ->name('wikis.find-by-slug');
+                    
+                    // Duplication
+                    Route::post('{wiki}/duplicate', 'duplicate')
+                        ->name('wikis.duplicate');
+                });
+                // Wiki Revision Routes
+
+                 Route::prefix('wikis/{wiki}/revisions')->controller(WikiRevisionController::class)->group(function () {
+                    Route::get('/', 'index')->name('wikis.revisions.index');
+                    Route::get('{revision}', 'show')->name('wikis.revisions.show');
+                    Route::post('{revision}/restore', 'restore')->name('wikis.revisions.restore');
+                    Route::delete('{revision}', 'destroy')->name('wikis.revisions.destroy');
+                    Route::get('../compare-revisions', 'compare')->name('wikis.revisions.compare');
+                    Route::get('../revision-statistics', 'statistics')->name('wikis.revisions.statistics');
+                });
+
 });
 
-    /*
-    |--------------------------------------------------------------------------
-    | Form Response Management API Routes
-    |--------------------------------------------------------------------------
-    */
 
-    Route::prefix('form-responses')->name('form-responses.')->group(function () {
-        // Standard RESTful routes
-        Route::apiResource('/', FormResponseController::class)->parameters(['' => 'form_response']);
-        
-        // Custom response actions
-        Route::controller(FormResponseController::class)->group(function () {
-            Route::get('form/{form}', 'getByForm')->name('by-form');
-            Route::get('my-responses', 'getUserResponses')->name('my-responses');
-            Route::delete('bulk-delete', 'bulkDelete')->name('bulk-delete');
-        });
-    });
+            /*
+            |--------------------------------------------------------------------------
+            | Public Form Submission Routes (No Authentication Required)
+            |--------------------------------------------------------------------------
+            */
 
-});
+            Route::prefix('public/forms')->name('public.forms.')->group(function () {
+                Route::post('{form}/submit', [FormResponseController::class, 'store'])->name('submit');
+                Route::get('{workspace:slug}/{form:slug}', [FormController::class, 'show'])->name('show');
+            });
 
+            /*
+            |--------------------------------------------------------------------------
+            | Public Wiki Routes (for published wikis)
+            |--------------------------------------------------------------------------
+            */
 
-    /*
-    |--------------------------------------------------------------------------
-    | Public Form Submission Routes (No Authentication Required)
-    |--------------------------------------------------------------------------
-    */
-
-    Route::prefix('public/forms')->name('public.forms.')->group(function () {
-        Route::post('{form}/submit', [FormResponseController::class, 'store'])->name('submit');
-        Route::get('{workspace:slug}/{form:slug}', [FormController::class, 'show'])->name('show');
-    });
+            Route::prefix('public/wikis')->controller(WikiController::class)->group(function () {
+                Route::get('find-by-slug', 'findBySlug')
+                    ->name('public.wikis.find-by-slug');
+                
+                Route::get('tree', 'tree')
+                    ->name('public.wikis.tree');
+            });
