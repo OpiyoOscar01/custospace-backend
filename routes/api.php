@@ -30,6 +30,8 @@ use App\Http\Controllers\Api\CustomFieldValueController;
 use App\Http\Controllers\Api\FormController;
 use App\Http\Controllers\Api\FormResponseController;
 use App\Http\Controllers\Api\WikiController;
+use App\Http\Controllers\Api\EventController;
+use App\Http\Controllers\Api\EventParticipantController;
 
 use Illuminate\Support\Facades\Route;
 
@@ -462,7 +464,54 @@ Route::middleware('auth:sanctum')->group(function () {
                     Route::get('../compare-revisions', 'compare')->name('wikis.revisions.compare');
                     Route::get('../revision-statistics', 'statistics')->name('wikis.revisions.statistics');
                 });
+                
+                /*
+                |--------------------------------------------------------------------------
+                | Event Management API Routes
+                |--------------------------------------------------------------------------
+                */
+                // Event Routes
+                Route::prefix('events')->controller(EventController::class)->group(function () {
+                    // Standard CRUD operations
+                    Route::get('/', 'index');
+                    Route::post('/', 'store');
+                    Route::get('{event}', 'show');
+                    Route::put('{event}', 'update');
+                    Route::delete('{event}', 'destroy');
+                    
+                    // Custom event actions
+                    Route::get('calendar', 'calendar');
+                    Route::get('upcoming', 'upcoming');
+                    Route::get('my-events', 'myEvents');
+                    
+                    // Event management actions
+                    Route::post('{event}/add-participants', 'addParticipants');
+                    Route::patch('{event}/cancel', 'cancel');
+                    Route::patch('{event}/reschedule', 'reschedule');
+                    
+                    // Event participants nested routes
+                    Route::prefix('{event}/participants')->controller(EventParticipantController::class)->group(function () {
+                        Route::get('/', 'index');
+                        Route::post('/', 'store');
+                        Route::get('{participant}', 'show');
+                        Route::put('{participant}', 'update');
+                        Route::delete('{participant}', 'destroy');
+                        
+                        // Participant status actions
+                        Route::patch('{participant}/accept', 'accept');
+                        Route::patch('{participant}/decline', 'decline');
+                        Route::patch('{participant}/tentative', 'tentative');
+                        
+                        // Get participants by status
+                        Route::get('by-status', 'byStatus');
+                    });
 
+                });
+
+                // Direct participant routes (for user's own participations)
+                Route::prefix('participants')->controller(EventParticipantController::class)->group(function () {
+                    Route::get('my-participations', 'myParticipations');
+                });
 });
 
 

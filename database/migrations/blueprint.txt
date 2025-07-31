@@ -703,6 +703,8 @@ return new class extends Migration
             $table->unique(['user_id', 'key']);
         });
 
+     --------------------------------------------------------------------------------------------------------
+
         // API Integration
         Schema::create('api_tokens', function (Blueprint $table) {
             $table->id();

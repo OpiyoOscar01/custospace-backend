@@ -32,9 +32,10 @@ use App\Models\FormResponse;
 use App\Policies\FormPolicy;
 use App\Policies\FormResponsePolicy;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
-use Illuminate\Support\Facades\Gate;
-use PharIo\Manifest\License;
-
+use App\Models\Event;
+use App\Models\EventParticipant;
+use App\Policies\EventParticipantPolicy;
+use App\Policies\EventPolicy;
 class AuthServiceProvider extends ServiceProvider
 {
     /**
@@ -58,6 +59,8 @@ class AuthServiceProvider extends ServiceProvider
         Notification::class => NotificationPolicy::class,
         Form::class => FormPolicy::class,
         FormResponse::class => FormResponsePolicy::class,
+        Event::class => EventPolicy::class,
+        EventParticipant::class => EventParticipantPolicy::class,
 
 
     ];

@@ -350,33 +350,35 @@ Let's follow best and modern laravel practices.
 These are my migration files:
       
 
-        // Wiki/Knowledge Base
-        Schema::create('wikis', function (Blueprint $table) {
+
+        // Calendar Events
+        Schema::create('events', function (Blueprint $table) {
             $table->id();
             $table->foreignId('workspace_id')->constrained()->cascadeOnDelete();
             $table->foreignId('created_by_id')->constrained('users')->cascadeOnDelete();
-            $table->foreignId('parent_id')->nullable()->constrained('wikis')->nullOnDelete();
             $table->string('title');
-            $table->string('slug');
-            $table->longText('content');
-            $table->boolean('is_published')->default(false);
+            $table->text('description')->nullable();
+            $table->datetime('start_date');
+            $table->datetime('end_date');
+            $table->boolean('all_day')->default(false);
+            $table->string('location')->nullable();
+            $table->enum('type', ['meeting', 'deadline', 'reminder', 'other'])->default('meeting');
             $table->json('metadata')->nullable();
             $table->timestamps();
             
-            $table->unique(['workspace_id', 'slug']);
-            $table->index(['workspace_id', 'is_published']);
-            $table->index(['parent_id', 'title']);
+            $table->index(['workspace_id', 'start_date']);
+            $table->index(['created_by_id', 'start_date']);
         });
 
-        Schema::create('wiki_revisions', function (Blueprint $table) {
+        Schema::create('event_participants', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('wiki_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('event_id')->constrained()->cascadeOnDelete();
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
-            $table->string('title');
-            $table->longText('content');
-            $table->text('summary')->nullable();
+            $table->enum('status', ['pending', 'accepted', 'declined', 'tentative'])->default('pending');
             $table->timestamps();
             
-            $table->index(['wiki_id', 'created_at']);
-            $table->index(['user_id', 'created_at']);
+            $table->unique(['event_id', 'user_id']);
+            $table->index(['user_id', 'status']);
         });
+
+       
