@@ -351,37 +351,35 @@ These are my migration files:
       
  
 
-        // Invitation System
-        Schema::create('invitations', function (Blueprint $table) {
+        // Reports and Analytics
+        Schema::create('reports', function (Blueprint $table) {
             $table->id();
             $table->foreignId('workspace_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('team_id')->nullable()->constrained()->nullOnDelete();
-            $table->foreignId('invited_by_id')->constrained('users')->cascadeOnDelete();
-            $table->string('email');
-            $table->string('token')->unique();
-            $table->enum('role', ['owner', 'admin', 'member', 'viewer'])->default('member');
-            $table->enum('status', ['pending', 'accepted', 'declined', 'expired'])->default('pending');
-            $table->json('metadata')->nullable();
-            $table->timestamp('expires_at');
+            $table->foreignId('created_by_id')->constrained('users')->cascadeOnDelete();
+            $table->string('name');
+            $table->string('type'); // time_tracking, task_completion, project_progress, etc.
+            $table->json('filters');
+            $table->json('settings')->nullable();
+            $table->boolean('is_scheduled')->default(false);
+            $table->string('schedule_frequency')->nullable();
+            $table->timestamp('last_generated_at')->nullable();
             $table->timestamps();
             
-            $table->index(['workspace_id', 'status']);
-            $table->index(['email', 'status']);
-            $table->index(['token', 'expires_at']);
+            $table->index(['workspace_id', 'type']);
+            $table->index(['created_by_id', 'type']);
         });
 
-        // Email Templates
-        Schema::create('email_templates', function (Blueprint $table) {
+        // Webhooks
+        Schema::create('webhooks', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('workspace_id')->nullable()->constrained()->nullOnDelete();
+            $table->foreignId('workspace_id')->constrained()->cascadeOnDelete();
             $table->string('name');
-            $table->string('slug');
-            $table->string('subject');
-            $table->longText('content');
-            $table->enum('type', ['system', 'custom'])->default('custom');
+            $table->string('url');
+            $table->json('events'); // ['task.created', 'task.updated', etc.]
+            $table->string('secret')->nullable();
             $table->boolean('is_active')->default(true);
+            $table->integer('retry_count')->default(3);
             $table->timestamps();
             
-            $table->unique(['workspace_id', 'slug']);
-            $table->index(['type', 'is_active']);
+            $table->index(['workspace_id', 'is_active']);
         });

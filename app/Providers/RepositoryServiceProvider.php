@@ -79,6 +79,10 @@ use App\Repositories\Contracts\EmailTemplateRepositoryInterface;
 use App\Repositories\Contracts\InvitationRepositoryInterface;
 use App\Repositories\EmailTemplateRepository;
 use App\Repositories\InvitationRepository;
+use App\Repositories\Contracts\ReportRepositoryInterface;
+use App\Repositories\Contracts\WebhookRepositoryInterface;
+use App\Repositories\ReportRepository;
+use App\Repositories\WebhookRepository;
 class RepositoryServiceProvider extends ServiceProvider
 {
     /**
@@ -125,6 +129,8 @@ class RepositoryServiceProvider extends ServiceProvider
         $this->app->bind(InvoiceRepositoryInterface::class,InvoiceRepository::class);
         $this->app->bind(InvitationRepositoryInterface::class,InvitationRepository::class);
         $this->app->bind(EmailTemplateRepositoryInterface::class,EmailTemplateRepository::class);
+        $this->app->bind(ReportRepositoryInterface::class, ReportRepository::class);
+        $this->app->bind(WebhookRepositoryInterface::class, WebhookRepository::class);
     }
 
 

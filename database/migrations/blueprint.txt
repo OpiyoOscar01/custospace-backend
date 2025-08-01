@@ -803,6 +803,7 @@ return new class extends Migration
             $table->index(['token', 'expires_at']);
         });
 
+
         // Email Templates
         Schema::create('email_templates', function (Blueprint $table) {
             $table->id();
@@ -818,6 +819,9 @@ return new class extends Migration
             $table->unique(['workspace_id', 'slug']);
             $table->index(['type', 'is_active']);
         });
+
+      --------------------------------------------------------------------------------------------------------
+
 
         // Reports and Analytics
         Schema::create('reports', function (Blueprint $table) {

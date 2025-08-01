@@ -39,8 +39,9 @@ use App\Http\Controllers\Api\PlanController;
 use App\Http\Controllers\Api\InvoiceController;
 use App\Http\Controllers\Api\EmailTemplateController;
 use App\Http\Controllers\Api\InvitationController;
+use App\Http\Controllers\Api\ReportController;
 use App\Http\Controllers\Api\SubscriptionController;
-
+use App\Http\Controllers\Api\WebhookController;
 use Illuminate\Support\Facades\Route;
 
 // Public auth routes
@@ -670,6 +671,36 @@ Route::middleware('auth:sanctum')->group(function () {
                     Route::patch('{email_template}/deactivate', 'deactivate')->name('email-templates.deactivate');
                     Route::post('{email_template}/duplicate', 'duplicate')->name('email-templates.duplicate');
                     Route::post('{email_template}/preview', 'preview')->name('email-templates.preview');
+                });
+
+                /*
+                |--------------------------------------------------------------------------
+                | Report Routes
+                |--------------------------------------------------------------------------
+                */
+                Route::prefix('reports')->controller(ReportController::class)->group(function () {
+                    Route::get('/', 'index');
+                    Route::post('/', 'store');
+                    Route::get('{report}', 'show');
+                    Route::put('{report}', 'update');
+                    Route::delete('{report}', 'destroy');
+                    Route::post('{report}/generate', 'generate');
+                    Route::post('{report}/duplicate', 'duplicate');
+                });
+
+                /*
+                |--------------------------------------------------------------------------
+                | Webhook Routes
+                |--------------------------------------------------------------------------
+                */
+                Route::prefix('webhooks')->controller(WebhookController::class)->group(function () {
+                    Route::get('/', 'index');
+                    Route::post('/', 'store');
+                    Route::get('{webhook}', 'show');
+                    Route::put('{webhook}', 'update');
+                    Route::delete('{webhook}', 'destroy');
+                    Route::patch('{webhook}/toggle-status', 'toggleStatus');
+                    Route::post('{webhook}/test', 'test');
                 });
 
 });
