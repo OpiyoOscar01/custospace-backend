@@ -37,6 +37,8 @@ use App\Http\Controllers\Api\UserPreferenceController;
 use App\Http\Controllers\Api\IntegrationController;
 use App\Http\Controllers\Api\PlanController;
 use App\Http\Controllers\Api\InvoiceController;
+use App\Http\Controllers\Api\EmailTemplateController;
+use App\Http\Controllers\Api\InvitationController;
 use App\Http\Controllers\Api\SubscriptionController;
 
 use Illuminate\Support\Facades\Route;
@@ -673,27 +675,27 @@ Route::middleware('auth:sanctum')->group(function () {
 });
 
 
-            /*
-            |--------------------------------------------------------------------------
-            | Public Form Submission Routes (No Authentication Required)
-            |--------------------------------------------------------------------------
-            */
+                /*
+                |--------------------------------------------------------------------------
+                | Public Form Submission Routes (No Authentication Required)
+                |--------------------------------------------------------------------------
+                */
 
-            Route::prefix('public/forms')->name('public.forms.')->group(function () {
-                Route::post('{form}/submit', [FormResponseController::class, 'store'])->name('submit');
-                Route::get('{workspace:slug}/{form:slug}', [FormController::class, 'show'])->name('show');
-            });
+                Route::prefix('public/forms')->name('public.forms.')->group(function () {
+                    Route::post('{form}/submit', [FormResponseController::class, 'store'])->name('submit');
+                    Route::get('{workspace:slug}/{form:slug}', [FormController::class, 'show'])->name('show');
+                });
 
-            /*
-            |--------------------------------------------------------------------------
-            | Public Wiki Routes (for published wikis)
-            |--------------------------------------------------------------------------
-            */
+                /*
+                |--------------------------------------------------------------------------
+                | Public Wiki Routes (for published wikis)
+                |--------------------------------------------------------------------------
+                */
 
-            Route::prefix('public/wikis')->controller(WikiController::class)->group(function () {
-                Route::get('find-by-slug', 'findBySlug')
-                    ->name('public.wikis.find-by-slug');
-                
-                Route::get('tree', 'tree')
-                    ->name('public.wikis.tree');
-            });
+                Route::prefix('public/wikis')->controller(WikiController::class)->group(function () {
+                    Route::get('find-by-slug', 'findBySlug')
+                        ->name('public.wikis.find-by-slug');
+                    
+                    Route::get('tree', 'tree')
+                        ->name('public.wikis.tree');
+                });
