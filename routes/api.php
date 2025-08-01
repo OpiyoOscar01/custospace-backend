@@ -36,6 +36,8 @@ use App\Http\Controllers\Api\ApiTokenController;
 use App\Http\Controllers\Api\UserPreferenceController;
 use App\Http\Controllers\Api\IntegrationController;
 use App\Http\Controllers\Api\PlanController;
+use App\Http\Controllers\Api\InvoiceController;
+use App\Http\Controllers\Api\SubscriptionController;
 
 use Illuminate\Support\Facades\Route;
 
@@ -600,6 +602,41 @@ Route::middleware('auth:sanctum')->group(function () {
                     Route::patch('/{plan}/deactivate', 'deactivate');
                     Route::patch('/{plan}/mark-popular', 'markPopular');
                     Route::patch('/{plan}/remove-popular', 'removePopular');
+                });
+                /*
+                |--------------------------------------------------------------------------
+                | Subscription Routes
+                |--------------------------------------------------------------------------
+                */
+
+                Route::prefix('subscriptions')->name('subscriptions.')->group(function () {
+                    // RESTful routes
+                    Route::apiResource('/', SubscriptionController::class)->parameters(['' => 'subscription']);
+                    
+                    // Custom actions
+                    Route::patch('{subscription}/activate', [SubscriptionController::class, 'activate'])->name('activate');
+                    Route::patch('{subscription}/deactivate', [SubscriptionController::class, 'deactivate'])->name('deactivate');
+                    Route::patch('{subscription}/cancel', [SubscriptionController::class, 'cancel'])->name('cancel');
+                    Route::patch('{subscription}/resume', [SubscriptionController::class, 'resume'])->name('resume');
+                    Route::patch('{subscription}/quantity', [SubscriptionController::class, 'updateQuantity'])->name('update-quantity');
+                });
+
+                /*
+                |--------------------------------------------------------------------------
+                | Invoice Routes
+                |--------------------------------------------------------------------------
+                */
+
+                Route::prefix('invoices')->name('invoices.')->group(function () {
+                    // RESTful routes
+                    Route::apiResource('/', InvoiceController::class)->parameters(['' => 'invoice']);
+                    
+                    // Custom actions
+                    Route::patch('{invoice}/mark-as-paid', [InvoiceController::class, 'markAsPaid'])->name('mark-as-paid');
+                    Route::patch('{invoice}/mark-as-void', [InvoiceController::class, 'markAsVoid'])->name('mark-as-void');
+                    Route::patch('{invoice}/mark-as-uncollectible', [InvoiceController::class, 'markAsUncollectible'])->name('mark-as-uncollectible');
+                    Route::patch('{invoice}/send', [InvoiceController::class, 'send'])->name('send');
+                    Route::get('stats', [InvoiceController::class, 'stats'])->name('stats');
                 });
 
 });

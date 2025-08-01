@@ -1,0 +1,470 @@
+ Production Enterprise React Architecture
+I'll provide you with a modern, scalable React architecture that perfectly complements your Laravel API. This follows enterprise-grade patterns with TypeScript, proper separation of concerns, and maintainable code structure.
+
+📁 Complete Folder Structure
+src/
+├── 📁 app/                           # Application core & configuration
+│   ├── 📁 store/                     # Redux Toolkit store configuration
+│   │   ├── index.ts                  # Store configuration & root reducer
+│   │   ├── rootSaga.ts              # Root saga for side effects
+│   │   └── middleware.ts            # Custom middleware
+│   ├── 📁 providers/                 # Context providers
+│   │   ├── AuthProvider.tsx         # Authentication context
+│   │   ├── ThemeProvider.tsx        # Theme context
+│   │   └── QueryProvider.tsx        # React Query provider
+│   ├── 📁 router/                    # Application routing
+│   │   ├── AppRouter.tsx            # Main router component
+│   │   ├── ProtectedRoute.tsx       # Route protection HOC
+│   │   ├── routes.ts                # Route definitions
+│   │   └── lazyRoutes.ts            # Lazy-loaded route components
+│   └── App.tsx                      # Root application component
+│
+├── 📁 features/                      # Feature-based modules
+│   ├── 📁 auth/                     # Authentication feature
+│   │   ├── 📁 components/           # Auth-specific components
+│   │   │   ├── LoginForm.tsx
+│   │   │   ├── RegisterForm.tsx
+│   │   │   └── PasswordResetForm.tsx
+│   │   ├── 📁 hooks/                # Auth-specific hooks
+│   │   │   ├── useAuth.ts
+│   │   │   ├── useLogin.ts
+│   │   │   └── useLogout.ts
+│   │   ├── 📁 services/             # Auth API services
+│   │   │   ├── authApi.ts
+│   │   │   └── authTypes.ts
+│   │   ├── 📁 store/                # Auth state management
+│   │   │   ├── authSlice.ts
+│   │   │   ├── authSaga.ts
+│   │   │   └── authSelectors.ts
+│   │   ├── 📁 pages/                # Auth pages
+│   │   │   ├── LoginPage.tsx
+│   │   │   ├── RegisterPage.tsx
+│   │   │   └── ForgotPasswordPage.tsx
+│   │   └── index.ts                 # Feature exports
+│   │
+│   ├── 📁 integrations/             # Integrations feature
+│   │   ├── 📁 components/
+│   │   │   ├── IntegrationCard.tsx
+│   │   │   ├── IntegrationForm.tsx
+│   │   │   ├── IntegrationList.tsx
+│   │   │   ├── IntegrationFilters.tsx
+│   │   │   ├── ConfigurationModal.tsx
+│   │   │   └── ConnectionStatus.tsx
+│   │   ├── 📁 hooks/
+│   │   │   ├── useIntegrations.ts
+│   │   │   ├── useIntegrationMutations.ts
+│   │   │   ├── useIntegrationFilters.ts
+│   │   │   └── useConnectionTest.ts
+│   │   ├── 📁 services/
+│   │   │   ├── integrationsApi.ts
+│   │   │   ├── integrationTypes.ts
+│   │   │   └── integrationValidation.ts
+│   │   ├── 📁 store/
+│   │   │   ├── integrationsSlice.ts
+│   │   │   ├── integrationsSaga.ts
+│   │   │   └── integrationsSelectors.ts
+│   │   ├── 📁 pages/
+│   │   │   ├── IntegrationsPage.tsx
+│   │   │   ├── IntegrationDetailPage.tsx
+│   │   │   └── CreateIntegrationPage.tsx
+│   │   ├── 📁 constants/
+│   │   │   └── integrationTypes.ts
+│   │   └── index.ts
+│   │
+│   ├── 📁 plans/                    # Plans feature
+│   │   ├── 📁 components/
+│   │   │   ├── PlanCard.tsx
+│   │   │   ├── PlanComparison.tsx
+│   │   │   ├── PricingTable.tsx
+│   │   │   ├── FeatureList.tsx
+│   │   │   ├── BillingCycleToggle.tsx
+│   │   │   └── PlanForm.tsx
+│   │   ├── 📁 hooks/
+│   │   │   ├── usePlans.ts
+│   │   │   ├── usePlanMutations.ts
+│   │   │   ├── usePlanFilters.ts
+│   │   │   └── usePlanComparison.ts
+│   │   ├── 📁 services/
+│   │   │   ├── plansApi.ts
+│   │   │   ├── planTypes.ts
+│   │   │   └── planValidation.ts
+│   │   ├── 📁 store/
+│   │   │   ├── plansSlice.ts
+│   │   │   ├── plansSaga.ts
+│   │   │   └── plansSelectors.ts
+│   │   ├── 📁 pages/
+│   │   │   ├── PlansPage.tsx
+│   │   │   ├── PlanDetailPage.tsx
+│   │   │   ├── CreatePlanPage.tsx
+│   │   │   └── PricingPage.tsx
+│   │   ├── 📁 constants/
+│   │   │   └── planConstants.ts
+│   │   └── index.ts
+│   │
+│   ├── 📁 dashboard/                # Dashboard feature
+│   │   ├── 📁 components/
+│   │   │   ├── DashboardLayout.tsx
+│   │   │   ├── StatsCard.tsx
+│   │   │   ├── RecentActivity.tsx
+│   │   │   └── QuickActions.tsx
+│   │   ├── 📁 hooks/
+│   │   │   └── useDashboardData.ts
+│   │   ├── 📁 pages/
+│   │   │   └── DashboardPage.tsx
+│   │   └── index.ts
+│   │
+│   └── 📁 workspaces/               # Workspaces feature
+│       ├── 📁 components/
+│       ├── 📁 hooks/
+│       ├── 📁 services/
+│       ├── 📁 store/
+│       ├── 📁 pages/
+│       └── index.ts
+│
+├── 📁 shared/                       # Shared resources across features
+│   ├── 📁 components/               # Reusable UI components
+│   │   ├── 📁 ui/                   # Basic UI components
+│   │   │   ├── Button/
+│   │   │   │   ├── Button.tsx
+│   │   │   │   ├── Button.module.scss
+│   │   │   │   ├── Button.stories.tsx
+│   │   │   │   ├── Button.test.tsx
+│   │   │   │   └── index.ts
+│   │   │   ├── Input/
+│   │   │   ├── Modal/
+│   │   │   ├── Card/
+│   │   │   ├── Table/
+│   │   │   ├── Form/
+│   │   │   ├── Loading/
+│   │   │   ├── Avatar/
+│   │   │   ├── Badge/
+│   │   │   ├── Dropdown/
+│   │   │   ├── Tabs/
+│   │   │   ├── Pagination/
+│   │   │   ├── SearchInput/
+│   │   │   ├── DatePicker/
+│   │   │   ├── Select/
+│   │   │   ├── Checkbox/
+│   │   │   ├── RadioButton/
+│   │   │   ├── Switch/
+│   │   │   ├── Slider/
+│   │   │   ├── Progress/
+│   │   │   ├── Tooltip/
+│   │   │   ├── Popover/
+│   │   │   ├── Alert/
+│   │   │   ├── Toast/
+│   │   │   └── Skeleton/
+│   │   ├── 📁 layout/               # Layout components
+│   │   │   ├── Header/
+│   │   │   ├── Sidebar/
+│   │   │   ├── Footer/
+│   │   │   ├── Navigation/
+│   │   │   ├── Breadcrumb/
+│   │   │   └── PageContainer/
+│   │   ├── 📁 forms/                # Form-related components
+│   │   │   ├── FormField/
+│   │   │   ├── FormSection/
+│   │   │   ├── ValidationMessage/
+│   │   │   └── FormActions/
+│   │   ├── 📁 data-display/         # Data display components
+│   │   │   ├── DataTable/
+│   │   │   ├── EmptyState/
+│   │   │   ├── StatusBadge/
+│   │   │   ├── MetricCard/
+│   │   │   └── Timeline/
+│   │   └── 📁 feedback/             # Feedback components
+│   │       ├── ConfirmDialog/
+│   │       ├── ErrorBoundary/
+│   │       ├── NotificationCenter/
+│   │       └── LoadingStates/
+│   │
+│   ├── 📁 hooks/                    # Shared custom hooks
+│   │   ├── useApi.ts                # Generic API hook
+│   │   ├── useDebounce.ts           # Debounce hook
+│   │   ├── useLocalStorage.ts       # Local storage hook
+│   │   ├── useSessionStorage.ts     # Session storage hook
+│   │   ├── usePagination.ts         # Pagination hook
+│   │   ├── useFilters.ts            # Filters hook
+│   │   ├── useSort.ts               # Sorting hook
+│   │   ├── useSearch.ts             # Search hook
+│   │   ├── useModal.ts              # Modal management hook
+│   │   ├── useNotification.ts       # Notification hook
+│   │   ├── usePermissions.ts        # Permissions hook
+│   │   ├── useWebSocket.ts          # WebSocket hook
+│   │   ├── useInfiniteScroll.ts     # Infinite scroll hook
+│   │   ├── useKeyboardShortcuts.ts  # Keyboard shortcuts hook
+│   │   ├── useClipboard.ts          # Clipboard hook
+│   │   ├── useGeolocation.ts        # Geolocation hook
+│   │   ├── useNetwork.ts            # Network status hook
+│   │   ├── useTheme.ts              # Theme hook
+│   │   ├── useBreakpoints.ts        # Responsive breakpoints hook
+│   │   └── useDocumentTitle.ts      # Document title hook
+│   │
+│   ├── 📁 services/                 # Shared services
+│   │   ├── 📁 api/                  # API configuration
+│   │   │   ├── apiClient.ts         # Axios configuration
+│   │   │   ├── endpoints.ts         # API endpoints
+│   │   │   ├── interceptors.ts      # Request/response interceptors
+│   │   │   ├── queryClient.ts       # React Query configuration
+│   │   │   └── errorHandler.ts      # Global error handling
+│   │   ├── 📁 storage/              # Storage services
+│   │   │   ├── localStorage.ts      # Local storage wrapper
+│   │   │   ├── sessionStorage.ts    # Session storage wrapper
+│   │   │   └── cookieStorage.ts     # Cookie storage wrapper
+│   │   ├── 📁 validation/           # Validation services
+│   │   │   ├── schemas.ts           # Common validation schemas
+│   │   │   ├── validators.ts        # Custom validators
+│   │   │   └── errorMessages.ts     # Validation error messages
+│   │   ├── 📁 analytics/            # Analytics services
+│   │   │   ├── analytics.ts         # Analytics wrapper
+│   │   │   └── events.ts            # Event tracking
+│   │   ├── 📁 notifications/        # Notification services
+│   │   │   ├── notificationService.ts
+│   │   │   └── pushNotifications.ts
+│   │   ├── 📁 websocket/            # WebSocket services
+│   │   │   ├── websocketClient.ts
+│   │   │   └── websocketEvents.ts
+│   │   └── 📁 utils/                # Utility services
+│   │       ├── dateUtils.ts
+│   │       ├── formatUtils.ts
+│   │       ├── validationUtils.ts
+│   │       ├── urlUtils.ts
+│   │       ├── fileUtils.ts
+│   │       ├── cryptoUtils.ts
+│   │       └── performanceUtils.ts
+│   │
+│   ├── 📁 constants/                # Application constants
+│   │   ├── apiConstants.ts          # API-related constants
+│   │   ├── appConstants.ts          # General app constants
+│   │   ├── routes.ts                # Route constants
+│   │   ├── permissions.ts           # Permission constants
+│   │   ├── errorCodes.ts            # Error code constants
+│   │   ├── storageKeys.ts           # Storage key constants
+│   │   ├── dateFormats.ts           # Date format constants
+│   │   └── breakpoints.ts           # Responsive breakpoints
+│   │
+│   ├── 📁 types/                    # TypeScript type definitions
+│   │   ├── api.ts                   # API response types
+│   │   ├── auth.ts                  # Authentication types
+│   │   ├── common.ts                # Common types
+│   │   ├── forms.ts                 # Form types
+│   │   ├── navigation.ts            # Navigation types
+│   │   ├── pagination.ts            # Pagination types
+│   │   ├── filters.ts               # Filter types
+│   │   ├── permissions.ts           # Permission types
+│   │   ├── theme.ts                 # Theme types
+│   │   └── global.d.ts              # Global type declarations
+│   │
+│   └── 📁 styles/                   # Global styles
+│       ├── 📁 base/                 # Base styles
+│       │   ├── _reset.scss          # CSS reset
+│       │   ├── _typography.scss     # Typography styles
+│       │   ├── _layout.scss         # Layout utilities
+│       │   └── _animations.scss     # Animation definitions
+│       ├── 📁 components/           # Component-specific styles
+│       │   ├── _buttons.scss
+│       │   ├── _forms.scss
+│       │   ├── _cards.scss
+│       │   └── _tables.scss
+│       ├── 📁 themes/               # Theme definitions
+│       │   ├── _light.scss          # Light theme
+│       │   ├── _dark.scss           # Dark theme
+│       │   └── _variables.scss      # CSS variables
+│       ├── 📁 utilities/            # Utility classes
+│       │   ├── _spacing.scss        # Margin/padding utilities
+│       │   ├── _colors.scss         # Color utilities
+│       │   ├── _text.scss           # Text utilities
+│       │   └── _display.scss        # Display utilities
+│       ├── globals.scss             # Global styles entry point
+│       └── index.scss               # Main styles entry point
+│
+├── 📁 assets/                       # Static assets
+│   ├── 📁 images/                   # Image assets
+│   │   ├── 📁 icons/                # Icon images
+│   │   ├── 📁 logos/                # Logo images
+│   │   ├── 📁 illustrations/        # Illustration images
+│   │   └── 📁 avatars/              # Avatar images
+│   ├── 📁 fonts/                    # Font files
+│   └── 📁 videos/                   # Video assets
+│
+├── 📁 config/                       # Configuration files
+│   ├── environment.ts               # Environment configuration
+│   ├── theme.ts                     # Theme configuration
+│   ├── api.ts                       # API configuration
+│   ├── routes.ts                    # Route configuration
+│   └── constants.ts                 # Configuration constants
+│
+├── 📁 lib/                          # Third-party library configurations
+│   ├── axios.ts                     # Axios configuration
+│   ├── reactQuery.ts               # React Query configuration
+│   ├── redux.ts                     # Redux configuration
+│   ├── router.ts                    # Router configuration
+│   └── validation.ts                # Validation library config
+│
+├── 📁 utils/                        # Utility functions
+│   ├── api.ts                       # API utility functions
+│   ├── auth.ts                      # Auth utility functions
+│   ├── date.ts                      # Date utility functions
+│   ├── format.ts                    # Format utility functions
+│   ├── validation.ts                # Validation utility functions
+│   ├── storage.ts                   # Storage utility functions
+│   ├── url.ts                       # URL utility functions
+│   ├── array.ts                     # Array utility functions
+│   ├── object.ts                    # Object utility functions
+│   ├── string.ts                    # String utility functions
+│   ├── number.ts                    # Number utility functions
+│   ├── file.ts                      # File utility functions
+│   ├── performance.ts               # Performance utility functions
+│   └── testing.ts                   # Testing utility functions
+│
+├── 📁 __tests__/                    # Global test files
+│   ├── 📁 __mocks__/                # Mock files
+│   │   ├── axios.ts                 # Axios mocks
+│   │   ├── localStorage.ts          # LocalStorage mocks
+│   │   └── intersectionObserver.ts  # IntersectionObserver mocks
+│   ├── 📁 fixtures/                 # Test data fixtures
+│   │   ├── authFixtures.ts
+│   │   ├── integrationFixtures.ts
+│   │   └── planFixtures.ts
+│   ├── 📁 utils/                    # Test utilities
+│   │   ├── testUtils.tsx            # Testing library setup
+│   │   ├── mockProviders.tsx        # Mock providers
+│   │   └── testHelpers.ts           # Test helper functions
+│   └── setup.ts                     # Test setup file
+│
+├── index.tsx                        # Application entry point
+└── vite-env.d.ts                   # Vite type declarations
+📋 Detailed File Type Explanations
+🏗️ App Core (app/)
+Purpose: Application-level configuration and setup
+
+store/: Redux Toolkit store configuration with middleware and root reducer
+providers/: React Context providers for global state management
+router/: Application routing setup with protected routes and lazy loading
+App.tsx: Root component that wraps all providers and router
+🎯 Features (features/)
+Purpose: Feature-based architecture where each domain has its own module
+
+Each feature contains:
+
+components/: Feature-specific React components
+hooks/: Custom hooks for feature logic and state management
+services/: API services and data fetching logic
+store/: Redux slices, sagas, and selectors for state management
+pages/: Page components for routing
+constants/: Feature-specific constants
+index.ts: Public API exports for the feature
+🔧 Shared (shared/)
+Purpose: Reusable code across all features
+
+Components (shared/components/)
+ui/: Basic building blocks (Button, Input, Modal, etc.)
+layout/: Layout-related components (Header, Sidebar, etc.)
+forms/: Form-specific reusable components
+data-display/: Components for displaying data (Table, Cards, etc.)
+feedback/: User feedback components (Alerts, Loading, etc.)
+Hooks (shared/hooks/)
+Custom hooks for common functionality (API calls, local storage, pagination, etc.)
+Services (shared/services/)
+api/: HTTP client configuration and interceptors
+storage/: Storage abstraction layers
+validation/: Form validation schemas and utilities
+analytics/: Analytics tracking services
+notifications/: Notification management
+websocket/: Real-time communication services
+Types (shared/types/)
+TypeScript interface and type definitions
+Global type declarations
+Constants (shared/constants/)
+Application-wide constants and enums
+🎨 Styles (shared/styles/)
+Purpose: Global styling and design system
+
+base/: CSS reset, typography, base layouts
+components/: Component-specific global styles
+themes/: Theme definitions (light/dark mode)
+utilities/: Utility classes for spacing, colors, etc.
+📦 Assets (assets/)
+Purpose: Static files like images, fonts, videos
+
+Organized by type for easy management
+Optimized for production builds
+⚙️ Config (config/)
+Purpose: Application configuration files
+
+Environment-specific settings
+Feature flags
+API endpoints
+Theme configurations
+📚 Lib (lib/)
+Purpose: Third-party library configurations
+
+Axios setup with interceptors
+React Query configuration
+Redux store setup
+Router configuration
+🛠️ Utils (utils/)
+Purpose: Pure utility functions
+
+No side effects
+Easily testable
+Reusable across the application
+🧪 Tests (__tests__/)
+Purpose: Global testing setup and utilities
+
+__mocks__/: Mock implementations for testing
+fixtures/: Test data and mock objects
+utils/: Testing utilities and helpers
+🏛️ Architecture Patterns Explained
+1. Feature-Based Architecture
+Each business domain (auth, plans, integrations) is a self-contained module
+Reduces coupling between features
+Makes the codebase more maintainable and scalable
+2. Layered Architecture
+Presentation Layer (Components/Pages)
+        ↓
+Business Logic Layer (Hooks/Services)
+        ↓
+Data Access Layer (API Services)
+        ↓
+State Management Layer (Redux/Context)
+3. Component Composition Pattern
+Small, focused components that do one thing well
+Composable components for flexibility
+Separation of container and presentational components
+4. Custom Hooks Pattern
+Business logic abstracted into custom hooks
+Reusable stateful logic
+Easy to test and maintain
+5. Service Layer Pattern
+API calls abstracted into service functions
+Centralized error handling
+Request/response transformation
+🎯 Key Benefits of This Architecture
+Scalability
+Easy to add new features without affecting existing ones
+Modular structure supports team collaboration
+Clear separation of concerns
+Maintainability
+Feature-based organization makes code easy to find
+Consistent patterns across the application
+Shared components reduce duplication
+Developer Experience
+TypeScript for type safety
+Clear folder structure with logical grouping
+Consistent naming conventions
+Performance
+Lazy loading for code splitting
+Optimized bundle sizes
+Efficient state management
+Testing
+Each layer is easily testable in isolation
+Mock-friendly architecture
+Clear test organization
+Enterprise-Ready
+Authorization and permission handling
+Error boundaries and error handling
+Analytics and monitoring integration
+Multi-theme support
+Internationalization ready
+This architecture perfectly complements your Laravel API by providing a robust, scalable, and maintainable frontend that can grow with your application's needs.

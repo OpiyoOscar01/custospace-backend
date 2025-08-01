@@ -71,6 +71,10 @@ use App\Repositories\Contracts\IntegrationRepositoryInterface;
 use App\Repositories\Contracts\PlanRepositoryInterface;
 use App\Repositories\IntegrationRepository;
 use App\Repositories\PlanRepository;
+use App\Repositories\Contracts\InvoiceRepositoryInterface;
+use App\Repositories\Contracts\SubscriptionRepositoryInterface;
+use App\Repositories\InvoiceRepository;
+use App\Repositories\SubscriptionRepository;
 class RepositoryServiceProvider extends ServiceProvider
 {
     /**
@@ -113,6 +117,8 @@ class RepositoryServiceProvider extends ServiceProvider
         $this->app->bind(ApiTokenRepositoryInterface::class,ApiTokenRepository::class);
         $this->app->bind(IntegrationRepositoryInterface::class,IntegrationRepository::class);
         $this->app->bind(PlanRepositoryInterface::class,PlanRepository::class);
+        $this->app->bind(SubscriptionRepositoryInterface::class,SubscriptionRepository::class);
+        $this->app->bind(InvoiceRepositoryInterface::class,InvoiceRepository::class);
     }
 
 

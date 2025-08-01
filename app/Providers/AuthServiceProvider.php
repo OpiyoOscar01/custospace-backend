@@ -35,6 +35,10 @@ use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvid
 use App\Models\Event;
 use App\Models\EventParticipant;
 use App\Policies\EventParticipantPolicy;
+use App\Models\Invoice;
+use App\Models\Subscription;
+use App\Policies\InvoicePolicy;
+use App\Policies\SubscriptionPolicy;
 use App\Policies\EventPolicy;
 class AuthServiceProvider extends ServiceProvider
 {
@@ -61,6 +65,8 @@ class AuthServiceProvider extends ServiceProvider
         FormResponse::class => FormResponsePolicy::class,
         Event::class => EventPolicy::class,
         EventParticipant::class => EventParticipantPolicy::class,
+        Subscription::class => SubscriptionPolicy::class,
+        Invoice::class => InvoicePolicy::class,
 
 
     ];
