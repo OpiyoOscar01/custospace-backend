@@ -349,32 +349,39 @@ Ensure API Resource formatting aligns with frontend expectations.
 Let's follow best and modern laravel practices.
 These are my migration files:
       
-   Schema::create('subscriptions', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('workspace_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('plan_id')->constrained()->cascadeOnDelete();
-            $table->string('stripe_id')->nullable();
-            $table->string('stripe_status')->nullable();
-            $table->string('stripe_price')->nullable();
-            $table->integer('quantity')->default(1);
-            $table->timestamp('trial_ends_at')->nullable();
-            $table->timestamp('ends_at')->nullable();
-            $table->timestamps();
-            
-            $table->index(['workspace_id', 'stripe_status']);
-        });
+ 
 
-        Schema::create('invoices', function (Blueprint $table) {
+        // Invitation System
+        Schema::create('invitations', function (Blueprint $table) {
             $table->id();
             $table->foreignId('workspace_id')->constrained()->cascadeOnDelete();
-            $table->string('stripe_id')->unique();
-            $table->string('number');
-            $table->decimal('amount', 10, 2);
-            $table->string('currency', 3);
-            $table->enum('status', ['draft', 'open', 'paid', 'uncollectible', 'void'])->default('draft');
-            $table->timestamp('due_date')->nullable();
-            $table->json('line_items')->nullable();
+            $table->foreignId('team_id')->nullable()->constrained()->nullOnDelete();
+            $table->foreignId('invited_by_id')->constrained('users')->cascadeOnDelete();
+            $table->string('email');
+            $table->string('token')->unique();
+            $table->enum('role', ['owner', 'admin', 'member', 'viewer'])->default('member');
+            $table->enum('status', ['pending', 'accepted', 'declined', 'expired'])->default('pending');
+            $table->json('metadata')->nullable();
+            $table->timestamp('expires_at');
             $table->timestamps();
             
             $table->index(['workspace_id', 'status']);
+            $table->index(['email', 'status']);
+            $table->index(['token', 'expires_at']);
+        });
+
+        // Email Templates
+        Schema::create('email_templates', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('workspace_id')->nullable()->constrained()->nullOnDelete();
+            $table->string('name');
+            $table->string('slug');
+            $table->string('subject');
+            $table->longText('content');
+            $table->enum('type', ['system', 'custom'])->default('custom');
+            $table->boolean('is_active')->default(true);
+            $table->timestamps();
+            
+            $table->unique(['workspace_id', 'slug']);
+            $table->index(['type', 'is_active']);
         });

@@ -638,6 +638,37 @@ Route::middleware('auth:sanctum')->group(function () {
                     Route::patch('{invoice}/send', [InvoiceController::class, 'send'])->name('send');
                     Route::get('stats', [InvoiceController::class, 'stats'])->name('stats');
                 });
+                /*
+                |--------------------------------------------------------------------------
+                | Invitation Routes
+                |--------------------------------------------------------------------------
+                */
+                // Standard RESTful routes
+                Route::apiResource('invitations', InvitationController::class);
+                
+                // Custom invitation actions
+                Route::prefix('invitations')->controller(InvitationController::class)->group(function () {
+                    Route::patch('{invitation}/accept', 'accept')->name('invitations.accept');
+                    Route::patch('{invitation}/decline', 'decline')->name('invitations.decline');
+                    Route::patch('{invitation}/resend', 'resend')->name('invitations.resend');
+                    Route::delete('bulk', 'bulkDelete')->name('invitations.bulk-delete');
+                });
+
+                /*
+                |--------------------------------------------------------------------------
+                | Email Template Routes
+                |--------------------------------------------------------------------------
+                */
+                // Standard RESTful routes
+                Route::apiResource('email-templates', EmailTemplateController::class);
+                
+                // Custom email template actions
+                Route::prefix('email-templates')->controller(EmailTemplateController::class)->group(function () {
+                    Route::patch('{email_template}/activate', 'activate')->name('email-templates.activate');
+                    Route::patch('{email_template}/deactivate', 'deactivate')->name('email-templates.deactivate');
+                    Route::post('{email_template}/duplicate', 'duplicate')->name('email-templates.duplicate');
+                    Route::post('{email_template}/preview', 'preview')->name('email-templates.preview');
+                });
 
 });
 

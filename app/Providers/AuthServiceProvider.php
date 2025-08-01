@@ -40,45 +40,51 @@ use App\Models\Subscription;
 use App\Policies\InvoicePolicy;
 use App\Policies\SubscriptionPolicy;
 use App\Policies\EventPolicy;
+use App\Models\EmailTemplate;
+use App\Models\Invitation;
+use App\Policies\EmailTemplatePolicy;
+use App\Policies\InvitationPolicy;
 class AuthServiceProvider extends ServiceProvider
 {
-    /**
-     * The model to policy mappings for the application.
-     *
-     * @var array<class-string, class-string>
-     */
-    protected $policies = [
-        Workspace::class => WorkspacePolicy::class,
-        Team::class => TeamPolicy::class,
-        Project::class => ProjectPolicy::class,
-        Status::class => StatusPolicy::class,
-        Pipeline::class => PipelinePolicy::class,
-        Media::class => MediaPolicy::class,
-        Attachment::class => AttachmentPolicy::class,
-        Project::class => ProjectPolicy::class,
-        Goal::class => GoalPolicy::class,
-        TimeLog::class => TimeLogPolicy::class,
-        RecurringTask::class => RecurringTaskPolicy::class,
-        Reminder::class => ReminderPolicy::class,
-        Notification::class => NotificationPolicy::class,
-        Form::class => FormPolicy::class,
-        FormResponse::class => FormResponsePolicy::class,
-        Event::class => EventPolicy::class,
-        EventParticipant::class => EventParticipantPolicy::class,
-        Subscription::class => SubscriptionPolicy::class,
-        Invoice::class => InvoicePolicy::class,
+/**
+ * The model to policy mappings for the application.
+ *
+ * @var array<class-string, class-string>
+ */
+protected $policies = [
+    Workspace::class => WorkspacePolicy::class,
+    Team::class => TeamPolicy::class,
+    Project::class => ProjectPolicy::class,
+    Status::class => StatusPolicy::class,
+    Pipeline::class => PipelinePolicy::class,
+    Media::class => MediaPolicy::class,
+    Attachment::class => AttachmentPolicy::class,
+    Project::class => ProjectPolicy::class,
+    Goal::class => GoalPolicy::class,
+    TimeLog::class => TimeLogPolicy::class,
+    RecurringTask::class => RecurringTaskPolicy::class,
+    Reminder::class => ReminderPolicy::class,
+    Notification::class => NotificationPolicy::class,
+    Form::class => FormPolicy::class,
+    FormResponse::class => FormResponsePolicy::class,
+    Event::class => EventPolicy::class,
+    EventParticipant::class => EventParticipantPolicy::class,
+    Subscription::class => SubscriptionPolicy::class,
+    Invoice::class => InvoicePolicy::class,
+    Invitation::class => InvitationPolicy::class,
+    EmailTemplate::class => EmailTemplatePolicy::class,
 
 
-    ];
+];
 
-    /**
-     * Register any authentication / authorization services.
-     */
-    public function boot(): void
-    {
-        $this->registerPolicies();
+/**
+ * Register any authentication / authorization services.
+ */
+public function boot(): void
+{
+    $this->registerPolicies();
 
-        // Define gates if needed
-    }
+    // Define gates if needed
+}
 }
 
