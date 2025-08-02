@@ -91,6 +91,8 @@ use App\Repositories\Contracts\ImportRepositoryInterface;
 use App\Repositories\Contracts\ExportRepositoryInterface;
 use App\Repositories\ImportRepository;
 use App\Repositories\ExportRepository;
+use App\Repositories\BackupRepository;
+use App\Repositories\Contracts\BackupRepositoryInterface;
 class RepositoryServiceProvider extends ServiceProvider
 {
     /**
@@ -143,6 +145,7 @@ class RepositoryServiceProvider extends ServiceProvider
         $this->app->bind(SettingRepositoryInterface::class, SettingRepository::class);
         $this->app->bind(ImportRepositoryInterface::class,ImportRepository::class);
         $this->app->bind(ExportRepositoryInterface::class,ExportRepository::class);
+        $this->app->bind(BackupRepositoryInterface::class,BackupRepository::class);
     }
 
 

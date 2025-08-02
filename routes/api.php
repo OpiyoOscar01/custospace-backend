@@ -33,6 +33,7 @@ use App\Http\Controllers\Api\WikiController;
 use App\Http\Controllers\Api\EventController;
 use App\Http\Controllers\Api\EventParticipantController;
 use App\Http\Controllers\Api\ApiTokenController;
+use App\Http\Controllers\Api\BackupController;
 use App\Http\Controllers\Api\UserPreferenceController;
 use App\Http\Controllers\Api\IntegrationController;
 use App\Http\Controllers\Api\PlanController;
@@ -787,9 +788,25 @@ Route::middleware('auth:sanctum')->group(function () {
                     Route::patch('{export}/cancel', 'cancel')->name('cancel');
                     Route::patch('{export}/retry', 'retry')->name('retry');
                 });
-
-
-});
+                
+                   /*
+                |--------------------------------------------------------------------------
+                | Backup Routes
+                |--------------------------------------------------------------------------
+                */
+                Route::prefix('backups')->middleware(['auth:sanctum'])->group(function () {
+                    // RESTful routes
+                    Route::apiResource('/', BackupController::class)->parameters(['' => 'backup']);
+                    
+                    // Custom action routes
+                    Route::patch('{backup}/start', [BackupController::class, 'start'])->name('backups.start');
+                    Route::patch('{backup}/complete', [BackupController::class, 'complete'])->name('backups.complete');
+                    Route::patch('{backup}/fail', [BackupController::class, 'fail'])->name('backups.fail');
+                    
+                    // Statistics route
+                    Route::get('stats', [BackupController::class, 'stats'])->name('backups.stats');
+                });
+        });
 
 
                 /*
