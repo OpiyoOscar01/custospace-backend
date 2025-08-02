@@ -42,6 +42,10 @@ use App\Http\Controllers\Api\InvitationController;
 use App\Http\Controllers\Api\ReportController;
 use App\Http\Controllers\Api\SubscriptionController;
 use App\Http\Controllers\Api\WebhookController;
+use App\Http\Controllers\Api\SettingController;
+use App\Http\Controllers\Api\WebhookDeliveryController;
+use App\Http\Controllers\Api\ImportController;
+use App\Http\Controllers\Api\ExportController;
 use Illuminate\Support\Facades\Route;
 
 // Public auth routes
@@ -702,6 +706,88 @@ Route::middleware('auth:sanctum')->group(function () {
                     Route::patch('{webhook}/toggle-status', 'toggleStatus');
                     Route::post('{webhook}/test', 'test');
                 });
+
+                /*
+                |--------------------------------------------------------------------------
+                | WebhookDelivery Routes 
+                |--------------------------------------------------------------------------
+                */
+                Route::prefix('webhook-deliveries')->controller(WebhookDeliveryController::class)->group(function () {
+                    Route::get('/', 'index')->name('webhook-deliveries.index');
+                    Route::post('/', 'store')->name('webhook-deliveries.store');
+                    Route::get('{webhook_delivery}', 'show')->name('webhook-deliveries.show');
+                    Route::put('{webhook_delivery}', 'update')->name('webhook-deliveries.update');
+                    Route::delete('{webhook_delivery}', 'destroy')->name('webhook-deliveries.destroy');
+                    
+                    // Custom actions
+                    Route::patch('{webhook_delivery}/retry', 'retry')->name('webhook-deliveries.retry');
+                    Route::patch('{webhook_delivery}/mark-delivered', 'markDelivered')->name('webhook-deliveries.mark-delivered');
+                    Route::patch('{webhook_delivery}/mark-failed', 'markFailed')->name('webhook-deliveries.mark-failed');
+                    Route::get('stats', 'stats')->name('webhook-deliveries.stats');
+                    Route::post('process-failed', 'processFailedDeliveries')->name('webhook-deliveries.process-failed');
+                });
+
+                // Route::apiResource('webhook-deliveries', WebhookDeliveryController::class);
+
+                 /*
+                |--------------------------------------------------------------------------
+                | Setting Routes 
+                |--------------------------------------------------------------------------
+                */
+                Route::prefix('settings')->controller(SettingController::class)->group(function () {
+                    Route::get('/', 'index')->name('settings.index');
+                    Route::post('/', 'store')->name('settings.store');
+                    Route::get('{setting}', 'show')->name('settings.show');
+                    Route::put('{setting}', 'update')->name('settings.update');
+                    Route::delete('{setting}', 'destroy')->name('settings.destroy');
+                    
+                    // Custom actions
+                    Route::get('value/get', 'getValue')->name('settings.get-value');
+                    Route::post('value/set', 'setValue')->name('settings.set-value');
+                    Route::get('workspace/settings', 'getWorkspaceSettings')->name('settings.workspace');
+                    Route::get('global/settings', 'getGlobalSettings')->name('settings.global');
+                    Route::post('bulk-update', 'bulkUpdate')->name('settings.bulk-update');
+                    Route::get('export', 'export')->name('settings.export');
+                    Route::post('import', 'import')->name('settings.import');
+                });
+
+                
+                 /*
+                |--------------------------------------------------------------------------
+                | Import Routes 
+                |--------------------------------------------------------------------------
+                */
+                Route::prefix('imports')->name('imports.')->controller(ImportController::class)->group(function () {
+                    Route::get('/', 'index')->name('index');
+                    Route::post('/', 'store')->name('store');
+                    Route::get('{import}', 'show')->name('show');
+                    Route::put('{import}', 'update')->name('update');
+                    Route::delete('{import}', 'destroy')->name('destroy');
+                    
+                    // Custom actions
+                    Route::patch('{import}/process', 'process')->name('process');
+                    Route::patch('{import}/cancel', 'cancel')->name('cancel');
+                    Route::patch('{import}/retry', 'retry')->name('retry');
+                });
+
+                   /*
+                |--------------------------------------------------------------------------
+                | Export Routes
+                |--------------------------------------------------------------------------
+                */
+                Route::prefix('exports')->name('exports.')->controller(ExportController::class)->group(function () {
+                    Route::get('/', 'index')->name('index');
+                    Route::post('/', 'store')->name('store');
+                    Route::get('{export}', 'show')->name('show');
+                    Route::put('{export}', 'update')->name('update');
+                    Route::delete('{export}', 'destroy')->name('destroy');
+                    
+                    // Custom actions
+                    Route::get('{export}/download', 'download')->name('download');
+                    Route::patch('{export}/cancel', 'cancel')->name('cancel');
+                    Route::patch('{export}/retry', 'retry')->name('retry');
+                });
+
 
 });
 

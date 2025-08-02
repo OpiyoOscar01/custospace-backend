@@ -349,37 +349,41 @@ Ensure API Resource formatting aligns with frontend expectations.
 Let's follow best and modern laravel practices.
 These are my migration files:
       
- 
-
-        // Reports and Analytics
-        Schema::create('reports', function (Blueprint $table) {
+     // Import/Export
+        Schema::create('imports', function (Blueprint $table) {
             $table->id();
             $table->foreignId('workspace_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('created_by_id')->constrained('users')->cascadeOnDelete();
-            $table->string('name');
-            $table->string('type'); // time_tracking, task_completion, project_progress, etc.
-            $table->json('filters');
-            $table->json('settings')->nullable();
-            $table->boolean('is_scheduled')->default(false);
-            $table->string('schedule_frequency')->nullable();
-            $table->timestamp('last_generated_at')->nullable();
+            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
+            $table->string('type'); // csv, json, excel
+            $table->string('entity'); // tasks, projects, users
+            $table->string('file_path');
+            $table->integer('total_rows')->default(0);
+            $table->integer('processed_rows')->default(0);
+            $table->integer('successful_rows')->default(0);
+            $table->integer('failed_rows')->default(0);
+            $table->enum('status', ['pending', 'processing', 'completed', 'failed'])->default('pending');
+            $table->json('errors')->nullable();
             $table->timestamps();
             
-            $table->index(['workspace_id', 'type']);
-            $table->index(['created_by_id', 'type']);
+            $table->index(['workspace_id', 'status']);
+            $table->index(['user_id', 'created_at']);
         });
 
-        // Webhooks
-        Schema::create('webhooks', function (Blueprint $table) {
+        Schema::create('exports', function (Blueprint $table) {
             $table->id();
             $table->foreignId('workspace_id')->constrained()->cascadeOnDelete();
-            $table->string('name');
-            $table->string('url');
-            $table->json('events'); // ['task.created', 'task.updated', etc.]
-            $table->string('secret')->nullable();
-            $table->boolean('is_active')->default(true);
-            $table->integer('retry_count')->default(3);
+            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
+            $table->string('type'); // csv, json, excel, pdf
+            $table->string('entity'); // tasks, projects, users
+            $table->json('filters')->nullable();
+            $table->string('file_path')->nullable();
+            $table->enum('status', ['pending', 'processing', 'completed', 'failed'])->default('pending');
+            $table->timestamp('expires_at')->nullable();
             $table->timestamps();
             
-            $table->index(['workspace_id', 'is_active']);
+            $table->index(['workspace_id', 'status']);
+            $table->index(['user_id', 'created_at']);
         });
+
+
+      

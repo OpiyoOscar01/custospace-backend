@@ -82,7 +82,15 @@ use App\Repositories\InvitationRepository;
 use App\Repositories\Contracts\ReportRepositoryInterface;
 use App\Repositories\Contracts\WebhookRepositoryInterface;
 use App\Repositories\ReportRepository;
+use App\Repositories\Contracts\SettingRepositoryInterface;
+use App\Repositories\Contracts\WebhookDeliveryRepositoryInterface;
+use App\Repositories\SettingRepository;
+use App\Repositories\WebhookDeliveryRepository;
 use App\Repositories\WebhookRepository;
+use App\Repositories\Contracts\ImportRepositoryInterface;
+use App\Repositories\Contracts\ExportRepositoryInterface;
+use App\Repositories\ImportRepository;
+use App\Repositories\ExportRepository;
 class RepositoryServiceProvider extends ServiceProvider
 {
     /**
@@ -131,6 +139,10 @@ class RepositoryServiceProvider extends ServiceProvider
         $this->app->bind(EmailTemplateRepositoryInterface::class,EmailTemplateRepository::class);
         $this->app->bind(ReportRepositoryInterface::class, ReportRepository::class);
         $this->app->bind(WebhookRepositoryInterface::class, WebhookRepository::class);
+        $this->app->bind(WebhookDeliveryRepositoryInterface::class, WebhookDeliveryRepository::class);
+        $this->app->bind(SettingRepositoryInterface::class, SettingRepository::class);
+        $this->app->bind(ImportRepositoryInterface::class,ImportRepository::class);
+        $this->app->bind(ExportRepositoryInterface::class,ExportRepository::class);
     }
 
 

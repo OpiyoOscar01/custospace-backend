@@ -41,9 +41,19 @@ use App\Policies\InvoicePolicy;
 use App\Policies\SubscriptionPolicy;
 use App\Policies\EventPolicy;
 use App\Models\EmailTemplate;
+use App\Models\Export;
+use App\Models\Import;
 use App\Models\Invitation;
+use App\Models\Setting;
+use App\Models\Webhook;
 use App\Policies\EmailTemplatePolicy;
+use App\Policies\ExportPolicy;
+use App\Policies\ImportPolicy;
 use App\Policies\InvitationPolicy;
+use App\Policies\SettingPolicy;
+use App\Policies\WebhookDeliveryPolicy;
+
+
 class AuthServiceProvider extends ServiceProvider
 {
 /**
@@ -73,6 +83,11 @@ protected $policies = [
     Invoice::class => InvoicePolicy::class,
     Invitation::class => InvitationPolicy::class,
     EmailTemplate::class => EmailTemplatePolicy::class,
+    Webhook::class => WebhookDeliveryPolicy::class,
+    Setting::class => SettingPolicy::class,
+    Import::class => ImportPolicy::class,
+    Export::class => ExportPolicy::class,
+
 
 
 ];
