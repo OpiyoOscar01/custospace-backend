@@ -15,10 +15,7 @@ return new class extends Migration
             $table->morphs('reactable');
             $table->string('type'); // emoji type like 'thumbs_up', 'heart', etc.
             $table->timestamps();
-            
-            $table->unique(['user_id', 'reactable_type', 'reactable_id', 'type']);
-            $table->index(['reactable_type', 'reactable_id']);
-        });
+            });
     }
 
     public function down(): void

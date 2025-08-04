@@ -1,67 +1,35 @@
 <?php
 
-namespace App\Models;
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\MorphTo;
-
-class Mention extends Model
+return new class extends Migration
 {
-    use HasFactory;
-
     /**
-     * The attributes that are mass assignable.
-     *
-     * @var array<int, string>
+     * Run the migrations.
      */
-    protected $fillable = [
-        'user_id',
-        'mentionable_type',
-        'mentionable_id',
-        'mentioned_by_id',
-        'is_read',
-    ];
-
-    /**
-     * The attributes that should be cast.
-     *
-     * @var array<string, string>
-     */
-    protected $casts = [
-        'is_read' => 'boolean',
-    ];
-
-    /**
-     * Get the user who was mentioned.
-     */
-    public function user(): BelongsTo
+    public function up(): void
     {
-        return $this->belongsTo(User::class);
+           Schema::create('mentions', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
+            $table->morphs('mentionable');
+            $table->foreignId('mentioned_by_id')->constrained('users')->cascadeOnDelete();
+            $table->boolean('is_read')->default(false);
+            $table->timestamps();
+            
+            $table->unique(['user_id', 'mentionable_type', 'mentionable_id']);
+            $table->index(['user_id', 'is_read']);
+        });
     }
 
     /**
-     * Get the user who made the mention.
+     * Reverse the migrations.
      */
-    public function mentionedBy(): BelongsTo
+    public function down(): void
     {
-        return $this->belongsTo(User::class, 'mentioned_by_id');
+        Schema::dropIfExists('mentions');
+       
     }
-
-    /**
-     * Get the mentionable model (Comment or Message).
-     */
-    public function mentionable(): MorphTo
-    {
-        return $this->morphTo();
-    }
-
-    /**
-     * Scope a query to only include unread mentions.
-     */
-    public function scopeUnread($query)
-    {
-        return $query->where('is_read', false);
-    }
-}
+};

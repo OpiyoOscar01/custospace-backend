@@ -19,7 +19,6 @@ return new class extends Migration
             $table->string('user_agent')->nullable();
             $table->timestamps();
             
-            $table->index(['auditable_type', 'auditable_id']);
             $table->index(['user_id', 'created_at']);
             $table->index(['event', 'created_at']);
         });

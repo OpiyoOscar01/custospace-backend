@@ -27,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('task_milestones');
+        Schema::dropIfExists('task_milestone');
     }
 };

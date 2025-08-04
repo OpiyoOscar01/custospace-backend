@@ -348,7 +348,7 @@ Add PHPDoc comments and annotations for method/documentation clarity and also ad
 Ensure API Resource formatting aligns with frontend expectations.
 Let's follow best and modern laravel practices.
 These are my migration files:
-    
+    Prepare a comprehensive TypeScript with React course that takes me from beginner to master. Structure the course into clear chapters, each with a specific learning objective or target. For every chapter, provide a practical, hands-on guide with real-world examples and exercises and solutions to reinforce learning.
 
 
       

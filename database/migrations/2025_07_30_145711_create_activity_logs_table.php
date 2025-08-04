@@ -21,8 +21,6 @@ return new class extends Migration
             $table->timestamps();
             
             $table->index(['user_id', 'created_at']);
-            $table->index(['workspace_id', 'created_at']);
-            $table->index(['subject_type', 'subject_id']);
             $table->index(['action', 'created_at']);
         });
     }

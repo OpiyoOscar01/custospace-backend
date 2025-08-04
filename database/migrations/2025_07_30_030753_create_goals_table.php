@@ -31,14 +31,6 @@ return new class extends Migration
             $table->index(['owner_id', 'status']);
         });
 
-        Schema::create('goal_tasks', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('goal_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('task_id')->constrained()->cascadeOnDelete();
-            $table->timestamps();
-            
-            $table->unique(['goal_id', 'task_id']);
-        });
     }
 
     /**

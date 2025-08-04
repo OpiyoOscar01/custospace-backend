@@ -17,9 +17,6 @@ return new class extends Migration
             $table->morphs('entity');
             $table->text('value')->nullable();
             $table->timestamps();
-            
-            $table->unique(['custom_field_id', 'entity_type', 'entity_id']);
-            $table->index(['entity_type', 'entity_id']);
         });
     }
 

@@ -23,8 +23,6 @@ return new class extends Migration
             $table->bigInteger('size');
             $table->json('metadata')->nullable();
             $table->timestamps();
-            
-            $table->index(['attachable_type', 'attachable_id']);
             $table->index(['user_id', 'created_at']);
         });
     }

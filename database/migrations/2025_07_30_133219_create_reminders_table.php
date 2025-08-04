@@ -19,9 +19,6 @@ return new class extends Migration
             $table->enum('type', ['email', 'in_app', 'sms'])->default('in_app');
             $table->boolean('is_sent')->default(false);
             $table->timestamps();
-            
-            $table->index(['user_id', 'remind_at']);
-            $table->index(['remindable_type', 'remindable_id']);
             $table->index(['remind_at', 'is_sent']);
         });
     }
